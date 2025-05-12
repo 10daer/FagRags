@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cookie&display=swap"
+      rel="stylesheet"
+    />
+    <title>Real-time Image Customizer</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .customizer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        justify-content: center;
+      }
+
+      .image-container {
+        position: relative;
+        width: 100%;
+        max-width: 823px;
+      }
+
+      .base-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .text-overlay {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+        color: #000000;
+        font-size: 21px;
+        font-family: "Cookie", cursive;
+        white-space: nowrap;
+        transition: transform 0.3s ease;
+      }
+
+      .controls {
+        width: 300px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+
+      input[type="text"],
+      input[type="range"] {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      .rotation-value {
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .btn:hover {
+        background-color: #45a049;
+      }
+
+      .canvas-container {
+        display: none;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+        color: #666;
+      }
+
+      .result-container {
+        margin-top: 30px;
+        text-align: center;
+        display: none;
+      }
+
+      .result-image {
+        max-width: 100%;
+        border: 1px solid #ddd;
+        margin-top: 10px;
+      }
+
+      /* Responsive font size adjustment */
+      @media (max-width: 768px) {
+        .text-overlay {
+          font-size: 14px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .text-overlay {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mug Customizer</h1>
+
+      <div class="customizer">
+        <div class="image-container" id="imageContainer">
+          <img
+            src=""
+            alt="Customizable product"
+            class="base-image"
+            id="baseImage"
+          />
+          <!-- Text overlays will be added dynamically -->
+        </div>
+
+        <div class="controls" id="controls">
+          <!-- Input fields will be added dynamically -->
+          <button class="btn" id="downloadBtn">Generate & Download</button>
+          <div class="loading" id="loading">Generating image...</div>
+        </div>
+      </div>
+
+      <div class="result-container" id="resultContainer">
+        <h2>Your Customized Design</h2>
+        <div id="resultImage" class="result-image"></div>
+        <a class="btn" id="downloadLink" download="customized-mug.png"
+          >Download Image</a
+        >
+      </div>
+    </div>
+
+    <div class="canvas-container">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+      // Configuration object for the mug design
+      const template = {
+        imageUrl: "/ref.webp",
+        textFields: [
+          {
+            id: "text1",
+            content: "Grandpa",
+            xPercent: 36,
+            yPercent: 52.5,
+            rotation: 15,
+          },
+          {
+            id: "text2",
+            content: "Sarah",
+            xPercent: 67,
+            yPercent: 44.5,
+            rotation: -16,
+          },
+          {
+            id: "text3",
+            content: "Kelvin",
+            xPercent: 67,
+            yPercent: 57.5,
+            rotation: 6,
+          },
+        ],
+      };
+
+      // DOM elements
+      const baseImage = document.getElementById("baseImage");
+      const imageContainer = document.getElementById("imageContainer");
+      const controlsContainer = document.getElementById("controls");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const loading = document.getElementById("loading");
+      const resultContainer = document.getElementById("resultContainer");
+      const resultImage = document.getElementById("resultImage");
+      const downloadLink = document.getElementById("downloadLink");
+
+      // Set base image source
+      baseImage.src = template.imageUrl;
+
+      // Wait for image to load before positioning text elements
+      baseImage.addEventListener("load", () => {
+        initializeTextFields();
+        createInputFields();
+        positionTextElements();
+
+        // Set up window resize event listener
+        window.addEventListener("resize", debounce(positionTextElements, 100));
+      });
+
+      // Create and position text overlays
+      function initializeTextFields() {
+        template.textFields.forEach((field) => {
+          const textElement = document.createElement("div");
+          textElement.id = `overlay-${field.id}`;
+          textElement.className = "text-overlay";
+          textElement.textContent = field.content;
+          textElement.dataset.rotation = field.rotation;
+          imageContainer.appendChild(textElement);
+        });
+      }
+
+      // Position text elements based on current container size
+      function positionTextElements() {
+        const containerWidth = imageContainer.offsetWidth;
+        const containerHeight = baseImage.offsetHeight;
+
+        template.textFields.forEach((field) => {
+          const textElement = document.getElementById(`overlay-${field.id}`);
+          if (!textElement) return;
+
+          // Calculate absolute position based on percentages
+          const xPos = (field.xPercent / 100) * containerWidth;
+          const yPos = (field.yPercent / 100) * containerHeight;
+
+          // Apply position and rotation
+          textElement.style.left = `${xPos}px`;
+          textElement.style.top = `${yPos}px`;
+          textElement.style.transform = `translate(-50%, -50%) rotate(${
+            textElement.dataset.rotation || field.rotation
+          }deg)`;
+        });
+      }
+
+      // Create input fields for each text element
+      function createInputFields() {
+        template.textFields.forEach((field) => {
+          const formGroup = document.createElement("div");
+          formGroup.className = "form-group";
+
+          // Text input
+          const label = document.createElement("label");
+          label.setAttribute("for", field.id);
+          label.textContent = `Edit "${field.content}"`;
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.id = field.id;
+          input.value = field.content;
+          input.addEventListener("input", (e) => {
+            const overlay = document.getElementById(`overlay-${field.id}`);
+            overlay.textContent = e.target.value;
+          });
+
+          // Rotation input
+          const rotationLabel = document.createElement("label");
+          rotationLabel.setAttribute("for", `rotation-${field.id}`);
+          rotationLabel.textContent = "Rotation";
+
+          const rotationInput = document.createElement("input");
+          rotationInput.type = "range";
+          rotationInput.id = `rotation-${field.id}`;
+          rotationInput.min = "-45";
+          rotationInput.max = "45";
+          rotationInput.step = "1";
+          rotationInput.value = field.rotation;
+
+          // Rotation value display
+          const rotationValue = document.createElement("div");
+          rotationValue.id = `rotation-value-${field.id}`;
+          rotationValue.className = "rotation-value";
+          rotationValue.textContent = `${field.rotation}°`;
+
+          // Rotation input event listener
+          rotationInput.addEventListener("input", (e) => {
+            const rotationDegrees = e.target.value;
+            const overlay = document.getElementById(`overlay-${field.id}`);
+            overlay.dataset.rotation = rotationDegrees;
+            overlay.style.transform = `translate(-50%, -50%) rotate(${rotationDegrees}deg)`;
+
+            // Update rotation value display
+            const valueDisplay = document.getElementById(
+              `rotation-value-${field.id}`
+            );
+            valueDisplay.textContent = `${rotationDegrees}°`;
+          });
+
+          formGroup.appendChild(label);
+          formGroup.appendChild(input);
+          formGroup.appendChild(rotationLabel);
+          formGroup.appendChild(rotationInput);
+          formGroup.appendChild(rotationValue);
+          controlsContainer.insertBefore(formGroup, downloadBtn);
+        });
+      }
+
+      // Handle download button click
+      downloadBtn.addEventListener("click", () => {
+        loading.style.display = "block";
+
+        // Use html2canvas to create an image from the container
+        html2canvas(imageContainer, {
+          allowTaint: true,
+          useCORS: true,
+          scale: 1,
+        }).then((canvas) => {
+          loading.style.display = "none";
+
+          // Convert canvas to data URL
+          const dataURL = canvas.toDataURL("image/png");
+
+          // Display the result image
+          const img = document.createElement("img");
+          img.src = dataURL;
+          resultImage.innerHTML = "";
+          resultImage.appendChild(img);
+
+          // Set download link
+          downloadLink.href = dataURL;
+
+          // Show result container
+          resultContainer.style.display = "block";
+
+          // Log exported image dimensions
+          console.log("Exported Image Dimensions:", {
+            width: canvas.width,
+            height: canvas.height,
+          });
+        });
+      });
+
+      // Debounce function to limit how often a function runs
+      function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+    </script>
+  </body>
+</html>
