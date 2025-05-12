@@ -99,7 +99,7 @@ h1 {
   justify-content: center;
   align-items: center;
   padding: var(--spacing-extra-loose);
-  border-radius: var(--radius-large) 0 0 var(--radius-large);
+  /* border-radius: var(--radius-large) 0 0 var(--radius-large); */
   overflow: hidden;
 }
 
@@ -113,7 +113,6 @@ h1 {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: var(--radius-base);
 }
 
 .text-overlay {
@@ -284,7 +283,6 @@ input[type="text"]:focus {
 
 .result-image {
   width: 100%;
-  border-radius: var(--radius-base);
   overflow: hidden;
   margin-bottom: var(--spacing-loose);
   background-color: var(--color-background);
