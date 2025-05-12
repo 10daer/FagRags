@@ -293,46 +293,10 @@
           input.addEventListener("input", (e) => {
             const overlay = document.getElementById(`overlay-${field.id}`);
             overlay.textContent = e.target.value;
-          });
-
-          // Rotation input
-          const rotationLabel = document.createElement("label");
-          rotationLabel.setAttribute("for", `rotation-${field.id}`);
-          rotationLabel.textContent = "Rotation";
-
-          const rotationInput = document.createElement("input");
-          rotationInput.type = "range";
-          rotationInput.id = `rotation-${field.id}`;
-          rotationInput.min = "-45";
-          rotationInput.max = "45";
-          rotationInput.step = "1";
-          rotationInput.value = field.rotation;
-
-          // Rotation value display
-          const rotationValue = document.createElement("div");
-          rotationValue.id = `rotation-value-${field.id}`;
-          rotationValue.className = "rotation-value";
-          rotationValue.textContent = `${field.rotation}°`;
-
-          // Rotation input event listener
-          rotationInput.addEventListener("input", (e) => {
-            const rotationDegrees = e.target.value;
-            const overlay = document.getElementById(`overlay-${field.id}`);
-            overlay.dataset.rotation = rotationDegrees;
-            overlay.style.transform = `translate(-50%, -50%) rotate(${rotationDegrees}deg)`;
-
-            // Update rotation value display
-            const valueDisplay = document.getElementById(
-              `rotation-value-${field.id}`
-            );
-            valueDisplay.textContent = `${rotationDegrees}°`;
-          });
+          });         
 
           formGroup.appendChild(label);
           formGroup.appendChild(input);
-          formGroup.appendChild(rotationLabel);
-          formGroup.appendChild(rotationInput);
-          formGroup.appendChild(rotationValue);
           controlsContainer.insertBefore(formGroup, downloadBtn);
         });
       }
