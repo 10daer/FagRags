@@ -1,0 +1,372 @@
+/* Shopify-inspired styling system */
+:root {
+  /* Colors */
+  --color-primary: #008060;
+  --color-primary-hover: #006e52;
+  --color-primary-focus: rgba(0, 128, 96, 0.15);
+  --color-secondary: #5c6ac4;
+  --color-secondary-hover: #5c6ac4;
+  --color-background: #f6f6f7;
+  --color-surface: #ffffff;
+  --color-text: #212b36;
+  --color-text-subdued: #637381;
+  --color-border: #dfe3e8;
+  --color-backdrop: rgba(33, 43, 54, 0.5);
+
+  /* Shadows */
+  --shadow-base: 0px 0px 0px 1px rgba(63, 63, 68, 0.05),
+    0px 1px 3px 0px rgba(63, 63, 68, 0.15);
+  --shadow-deep: 0px 2px 16px rgba(33, 43, 54, 0.08);
+  --shadow-button: 0px 2px 5px rgba(0, 0, 0, 0.08);
+
+  /* Spacing */
+  --spacing-none: 0;
+  --spacing-extra-tight: 0.25rem;
+  --spacing-tight: 0.5rem;
+  --spacing-base: 1rem;
+  --spacing-loose: 1.5rem;
+  --spacing-extra-loose: 2rem;
+
+  /* Typography */
+  --font-size-heading: 1.5rem;
+  --font-size-subheading: 1.125rem;
+  --font-size-base: 1rem;
+  --font-size-small: 0.875rem;
+
+  /* Radius */
+  --radius-small: 4px;
+  --radius-base: 8px;
+  --radius-large: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI",
+    Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+  padding: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-extra-loose);
+}
+
+header {
+  text-align: center;
+  margin-bottom: var(--spacing-extra-loose);
+}
+
+h1 {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-tight);
+  font-size: var(--font-size-heading);
+}
+
+.subtitle {
+  color: var(--color-text-subdued);
+  font-weight: 400;
+  font-size: var(--font-size-base);
+}
+
+.customizer-container {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-base);
+  overflow: hidden;
+}
+
+.customizer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.image-container {
+  position: relative;
+  width: 60%;
+  background-color: var(--color-background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-extra-loose);
+  border-radius: var(--radius-large) 0 0 var(--radius-large);
+  overflow: hidden;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+}
+
+.base-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-base);
+}
+
+.text-overlay {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+  color: #000000;
+  font-size: 24px;
+  font-family: "Cookie", cursive;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.controls {
+  width: 40%;
+  padding: var(--spacing-extra-loose);
+  background-color: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+}
+
+.controls-title {
+  font-size: var(--font-size-subheading);
+  margin-bottom: var(--spacing-loose);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: var(--spacing-loose);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-tight);
+  font-weight: 500;
+  color: var(--color-text);
+  font-size: var(--font-size-small);
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-tight);
+  color: var(--color-text);
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-focus);
+}
+
+.btn {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: white;
+  padding: var(--spacing-base) var(--spacing-loose);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  box-shadow: var(--shadow-button);
+}
+
+.btn:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  margin-top: var(--spacing-base);
+  color: var(--color-text-subdued);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid rgba(0, 128, 96, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--color-primary);
+  animation: spin 1s ease-in-out infinite;
+  margin-right: var(--spacing-tight);
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-backdrop);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-base);
+}
+
+.modal {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-large);
+  max-width: 90%;
+  width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: var(--shadow-deep);
+  padding: var(--spacing-extra-loose);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--spacing-base);
+  right: var(--spacing-base);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-subdued);
+  transition: color 0.2s ease;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.modal-close:hover {
+  color: var(--color-text);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.modal-title {
+  font-size: var(--font-size-subheading);
+  margin-bottom: var(--spacing-loose);
+  color: var(--color-text);
+  font-weight: 600;
+  text-align: center;
+}
+
+.result-image {
+  width: 100%;
+  border-radius: var(--radius-base);
+  overflow: hidden;
+  margin-bottom: var(--spacing-loose);
+  background-color: var(--color-background);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.result-image img {
+  max-width: 100%;
+  max-height: 50vh;
+  object-fit: contain;
+  display: block;
+}
+
+.download-btn {
+  background-color: var(--color-secondary);
+  margin-top: var(--spacing-base);
+}
+
+.download-btn:hover {
+  background-color: var(--color-secondary-hover);
+}
+
+/* Skeleton loader */
+.skeleton-loader {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: var(--radius-base);
+  height: 300px;
+  width: 100%;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.canvas-container {
+  display: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .customizer {
+    flex-direction: column;
+  }
+
+  .image-container {
+    width: 100%;
+    border-radius: var(--radius-large) var(--radius-large) 0 0;
+    padding: var(--spacing-loose);
+  }
+
+  .controls {
+    width: 100%;
+    border-radius: 0 0 var(--radius-large) var(--radius-large);
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .text-overlay {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-base);
+  }
+
+  .text-overlay {
+    font-size: 16px;
+  }
+
+  .modal {
+    padding: var(--spacing-loose);
+  }
+}
