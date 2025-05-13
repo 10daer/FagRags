@@ -48,7 +48,7 @@ const templates = {
         id: "text2",
         content: "Sarah",
         xPercent: 67,
-        yPercent: 50,
+        yPercent: 51,
         rotation: -5,
       },
     ],
@@ -75,22 +75,22 @@ const templates = {
         id: "text2",
         content: "Sarah",
         xPercent: 67,
-        yPercent: 40,
-        rotation: -16,
+        yPercent: 39,
+        rotation: -24,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 67,
-        yPercent: 52,
-        rotation: 0,
+        xPercent: 69,
+        yPercent: 51,
+        rotation: -5,
       },
       {
         id: "text4",
         content: "Emma",
-        xPercent: 67,
-        yPercent: 64,
-        rotation: 16,
+        xPercent: 65,
+        yPercent: 65,
+        rotation: 23,
       },
     ],
     colors: {
@@ -115,30 +115,30 @@ const templates = {
       {
         id: "text2",
         content: "Sarah",
-        xPercent: 67,
-        yPercent: 35,
-        rotation: -16,
+        xPercent: 57,
+        yPercent: 32,
+        rotation: -45,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 67,
-        yPercent: 47,
-        rotation: -5,
+        xPercent: 68,
+        yPercent: 43,
+        rotation: -25,
       },
       {
         id: "text4",
         content: "Emma",
         xPercent: 67,
-        yPercent: 59,
+        yPercent: 55,
         rotation: 5,
       },
       {
         id: "text5",
         content: "Jake",
-        xPercent: 67,
-        yPercent: 71,
-        rotation: 16,
+        xPercent: 58,
+        yPercent: 67,
+        rotation: 45,
       },
     ],
     colors: {
@@ -163,37 +163,37 @@ const templates = {
       {
         id: "text2",
         content: "Sarah",
-        xPercent: 67,
-        yPercent: 32,
-        rotation: -16,
+        xPercent: 47,
+        yPercent: 29,
+        rotation: -80,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 67,
-        yPercent: 43,
-        rotation: -8,
+        xPercent: 62,
+        yPercent: 38,
+        rotation: -35,
       },
       {
         id: "text4",
         content: "Emma",
-        xPercent: 67,
-        yPercent: 54,
-        rotation: 0,
+        xPercent: 64.5,
+        yPercent: 50,
+        rotation: -10,
       },
       {
         id: "text5",
         content: "Jake",
-        xPercent: 67,
-        yPercent: 65,
-        rotation: 8,
+        xPercent: 61,
+        yPercent: 62,
+        rotation: 25,
       },
       {
         id: "text6",
         content: "Lily",
-        xPercent: 67,
-        yPercent: 76,
-        rotation: 16,
+        xPercent: 48.5,
+        yPercent: 69.5,
+        rotation: 60,
       },
     ],
     colors: {
@@ -211,51 +211,51 @@ const templates = {
       {
         id: "text1",
         content: "Grandpa",
-        xPercent: 36,
+        xPercent: 37,
         yPercent: 52.5,
         rotation: 15,
       },
       {
         id: "text2",
         content: "Sarah",
-        xPercent: 67,
-        yPercent: 29,
-        rotation: -16,
+        xPercent: 44,
+        yPercent: 30,
+        rotation: -90,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 67,
-        yPercent: 39,
-        rotation: -10,
+        xPercent: 57,
+        yPercent: 31,
+        rotation: -70,
       },
       {
         id: "text4",
         content: "Emma",
         xPercent: 67,
-        yPercent: 49,
-        rotation: -5,
+        yPercent: 42,
+        rotation: -30,
       },
       {
         id: "text5",
         content: "Jake",
-        xPercent: 67,
-        yPercent: 59,
-        rotation: 5,
+        xPercent: 65,
+        yPercent: 56,
+        rotation: 25,
       },
       {
         id: "text6",
         content: "Lily",
-        xPercent: 67,
-        yPercent: 69,
-        rotation: 10,
+        xPercent: 56,
+        yPercent: 66,
+        rotation: 50,
       },
       {
         id: "text7",
         content: "Noah",
-        xPercent: 67,
-        yPercent: 79,
-        rotation: 16,
+        xPercent: 44,
+        yPercent: 70,
+        rotation: 86,
       },
     ],
     colors: {
@@ -304,6 +304,54 @@ baseImage.addEventListener("load", () => {
 });
 
 // Function to generate color options based on current template
+// function updateColorOptions() {
+//   // Clear existing color options
+//   colorOptionsContainer.innerHTML = "";
+
+//   // Create new color options based on current template
+//   Object.keys(currentTemplate.colors).forEach((color, index) => {
+//     const label = document.createElement("label");
+//     label.setAttribute(
+//       "for",
+//       `color-${color.toLowerCase().replace(/\s+/g, "-")}`
+//     );
+//     label.className =
+//       "option-item" + (color === currentColor ? " selected" : "");
+
+//     const radioInput = document.createElement("input");
+//     radioInput.type = "radio";
+//     radioInput.name = "color";
+//     radioInput.id = `color-${color.toLowerCase().replace(/\s+/g, "-")}`;
+//     radioInput.value = color;
+//     radioInput.checked = color === currentColor;
+
+//     const labelText = document.createElement("span");
+//     labelText.className = "option-text";
+//     labelText.textContent = color;
+
+//     // Add event listener to radio button
+//     radioInput.addEventListener("change", function () {
+//       // Update selected class
+//       document
+//         .querySelectorAll(".color-options .option-item")
+//         .forEach((item) => {
+//           item.classList.remove("selected");
+//         });
+//       this.closest(".option-item").classList.add("selected");
+
+//       // Update current color
+//       currentColor = this.value;
+
+//       // Update image source with the appropriate image for this kid count and color
+//       baseImage.src = `/${currentTemplate.colors[currentColor]}`;
+//     });
+
+//     label.appendChild(radioInput);
+//     label.appendChild(labelText);
+//     colorOptionsContainer.appendChild(label);
+//   });
+// }
+
 function updateColorOptions() {
   // Clear existing color options
   colorOptionsContainer.innerHTML = "";
@@ -329,22 +377,30 @@ function updateColorOptions() {
     labelText.className = "option-text";
     labelText.textContent = color;
 
-    // Add event listener to radio button
-    radioInput.addEventListener("change", function () {
-      // Update selected class
-      document
-        .querySelectorAll(".color-options .option-item")
-        .forEach((item) => {
-          item.classList.remove("selected");
-        });
-      this.closest(".option-item").classList.add("selected");
+    if (color.toLowerCase() === "ceramic yellow") {
+      // Yellow color: allow interaction
+      radioInput.disabled = false;
 
-      // Update current color
-      currentColor = this.value;
+      radioInput.addEventListener("change", function () {
+        // Update selected class
+        document
+          .querySelectorAll(".color-options .option-item")
+          .forEach((item) => {
+            item.classList.remove("selected");
+          });
+        this.closest(".option-item").classList.add("selected");
 
-      // Update image source with the appropriate image for this kid count and color
-      baseImage.src = `/${currentTemplate.colors[currentColor]}`;
-    });
+        // Update current color
+        currentColor = this.value;
+
+        // Update image source with the appropriate image for this kid count and color
+        baseImage.src = `/${currentTemplate.colors[currentColor]}`;
+      });
+    } else {
+      // Disable other colors
+      radioInput.disabled = true;
+      label.classList.add("disabled"); // Optional: style with CSS
+    }
 
     label.appendChild(radioInput);
     label.appendChild(labelText);

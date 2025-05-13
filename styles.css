@@ -265,6 +265,26 @@ input[type="text"]:focus {
   background-color: var(--color-primary-focus);
 }
 
+.option-item.disabled {
+  position: relative;
+  opacity: 0.75;
+  border-color: var(--color-primary);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.option-item.disabled::after {
+  content: "";
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background-color: red;
+  transform: translateY(15px);
+  z-index: 2;
+}
+
 .option-item.selected {
   background-color: #1a1a1a;
   border-color: #1a1a1a;
