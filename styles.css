@@ -115,7 +115,6 @@ h1 {
   position: relative;
   width: 100%;
   max-width: 500px;
-  border: 1px solid rgb(115, 113, 113);
 }
 
 .base-image {
@@ -140,8 +139,8 @@ h1 {
   padding: var(--spacing-extra-loose);
   background-color: var(--color-surface);
   border-left: 1px solid var(--color-border);
-  overflow-y: auto; /* Enable scrolling for the controls section */
-  height: 100%; /* Make it take full height of the container */
+  overflow-y: auto;
+  height: 100%;
 }
 
 .product-title {
@@ -196,9 +195,7 @@ input[type="text"]:focus {
   text-decoration: none;
   width: 100%;
   box-shadow: var(--shadow-button);
-  margin-bottom: var(
-    --spacing-extra-loose
-  ); /* Add bottom margin to ensure scroll area includes button */
+  margin-bottom: var(--spacing-extra-loose);
 }
 
 .btn:hover {
