@@ -6,22 +6,22 @@ const templates = {
       {
         id: "text1",
         content: "Grandpa",
-        xPercent: 36,
-        yPercent: 52.5,
-        rotation: 15,
+        xPercent: 35,
+        yPercent: 52,
+        rotation: 5,
       },
       {
         id: "text2",
         content: "Sarah",
-        xPercent: 67,
-        yPercent: 44.5,
+        xPercent: 65,
+        yPercent: 42.5,
         rotation: -16,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 67,
-        yPercent: 57.5,
+        xPercent: 65,
+        yPercent: 56.5,
         rotation: 6,
       },
     ],
@@ -40,9 +40,9 @@ const templates = {
       {
         id: "text1",
         content: "Grandpa",
-        xPercent: 36,
-        yPercent: 52.5,
-        rotation: 15,
+        xPercent: 35,
+        yPercent: 53,
+        rotation: 5,
       },
       {
         id: "text2",
@@ -67,29 +67,29 @@ const templates = {
       {
         id: "text1",
         content: "Grandpa",
-        xPercent: 36,
-        yPercent: 52.5,
-        rotation: 15,
+        xPercent: 34,
+        yPercent: 51,
+        rotation: 5,
       },
       {
         id: "text2",
         content: "Sarah",
-        xPercent: 67,
-        yPercent: 39,
-        rotation: -24,
+        xPercent: 61,
+        yPercent: 37,
+        rotation: -25,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 69,
-        yPercent: 51,
+        xPercent: 64,
+        yPercent: 49.5,
         rotation: -5,
       },
       {
         id: "text4",
         content: "Emma",
-        xPercent: 65,
-        yPercent: 65,
+        xPercent: 59,
+        yPercent: 63,
         rotation: 23,
       },
     ],
@@ -109,35 +109,35 @@ const templates = {
         id: "text1",
         content: "Grandpa",
         xPercent: 36,
-        yPercent: 52.5,
-        rotation: 15,
+        yPercent: 51,
+        rotation: 5,
       },
       {
         id: "text2",
         content: "Sarah",
         xPercent: 57,
-        yPercent: 32,
-        rotation: -45,
+        yPercent: 30,
+        rotation: -50,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 68,
-        yPercent: 43,
-        rotation: -25,
+        xPercent: 66,
+        yPercent: 42.5,
+        rotation: -20,
       },
       {
         id: "text4",
         content: "Emma",
-        xPercent: 67,
-        yPercent: 55,
-        rotation: 5,
+        xPercent: 66,
+        yPercent: 54,
+        rotation: 0,
       },
       {
         id: "text5",
         content: "Jake",
-        xPercent: 58,
-        yPercent: 67,
+        xPercent: 57,
+        yPercent: 66,
         rotation: 45,
       },
     ],
@@ -157,13 +157,13 @@ const templates = {
         id: "text1",
         content: "Grandpa",
         xPercent: 36,
-        yPercent: 52.5,
-        rotation: 15,
+        yPercent: 52,
+        rotation: 5,
       },
       {
         id: "text2",
         content: "Sarah",
-        xPercent: 47,
+        xPercent: 46.5,
         yPercent: 29,
         rotation: -80,
       },
@@ -177,22 +177,22 @@ const templates = {
       {
         id: "text4",
         content: "Emma",
-        xPercent: 64.5,
+        xPercent: 65,
         yPercent: 50,
         rotation: -10,
       },
       {
         id: "text5",
         content: "Jake",
-        xPercent: 61,
-        yPercent: 62,
+        xPercent: 60,
+        yPercent: 61.5,
         rotation: 25,
       },
       {
         id: "text6",
         content: "Lily",
-        xPercent: 48.5,
-        yPercent: 69.5,
+        xPercent: 48,
+        yPercent: 69,
         rotation: 60,
       },
     ],
@@ -211,50 +211,50 @@ const templates = {
       {
         id: "text1",
         content: "Grandpa",
-        xPercent: 37,
-        yPercent: 52.5,
-        rotation: 15,
+        xPercent: 36,
+        yPercent: 51,
+        rotation: 5,
       },
       {
         id: "text2",
         content: "Sarah",
-        xPercent: 44,
-        yPercent: 30,
+        xPercent: 43,
+        yPercent: 28,
         rotation: -90,
       },
       {
         id: "text3",
         content: "Kelvin",
-        xPercent: 57,
+        xPercent: 55,
         yPercent: 31,
         rotation: -70,
       },
       {
         id: "text4",
         content: "Emma",
-        xPercent: 67,
-        yPercent: 42,
+        xPercent: 65,
+        yPercent: 41,
         rotation: -30,
       },
       {
         id: "text5",
         content: "Jake",
-        xPercent: 65,
-        yPercent: 56,
+        xPercent: 64,
+        yPercent: 55,
         rotation: 25,
       },
       {
         id: "text6",
         content: "Lily",
-        xPercent: 56,
-        yPercent: 66,
+        xPercent: 55,
+        yPercent: 65,
         rotation: 50,
       },
       {
         id: "text7",
         content: "Noah",
-        xPercent: 44,
-        yPercent: 70,
+        xPercent: 42.5,
+        yPercent: 67,
         rotation: 86,
       },
     ],
@@ -268,11 +268,231 @@ const templates = {
     },
   },
 };
+// const templates = {
+//   2: {
+//     textFields: [
+//       {
+//         id: "text1",
+//         content: "Grandpa",
+//         xPercent: 36,
+//         yPercent: 52,
+//         rotation: 5,
+//       },
+//       {
+//         id: "text2",
+//         content: "Sarah",
+//         xPercent: 67,
+//         yPercent: 43,
+//         rotation: -16,
+//       },
+//       {
+//         id: "text3",
+//         content: "Kelvin",
+//         xPercent: 66,
+//         yPercent: 56,
+//         rotation: 6,
+//       },
+//     ],
+//   },
+//   // Configuration for 1 kid
+//   1: {
+//     textFields: [
+//       {
+//         id: "text1",
+//         content: "Grandpa",
+//         xPercent: 36,
+//         yPercent: 52,
+//         rotation: 5,
+//       },
+//       {
+//         id: "text2",
+//         content: "Sarah",
+//         xPercent: 67,
+//         yPercent: 50,
+//         rotation: -5,
+//       },
+//     ],
+//   },
+//   // Configuration for 3 kids
+//   3: {
+//     textFields: [
+//       {
+//         id: "text1",
+//         content: "Grandpa",
+//         xPercent: 36,
+//         yPercent: 52,
+//         rotation: 5,
+//       },
+//       {
+//         id: "text2",
+//         content: "Sarah",
+//         xPercent: 62,
+//         yPercent: 38,
+//         rotation: -25,
+//       },
+//       {
+//         id: "text3",
+//         content: "Kelvin",
+//         xPercent: 65,
+//         yPercent: 50,
+//         rotation: -5,
+//       },
+//       {
+//         id: "text4",
+//         content: "Emma",
+//         xPercent: 60,
+//         yPercent: 63,
+//         rotation: 23,
+//       },
+//     ],
+//   },
+//   // Configuration for 4 kids
+//   4: {
+//     textFields: [
+//       {
+//         id: "text1",
+//         content: "Grandpa",
+//         xPercent: 37,
+//         yPercent: 51,
+//         rotation: 5,
+//       },
+//       {
+//         id: "text2",
+//         content: "Sarah",
+//         xPercent: 58,
+//         yPercent: 31,
+//         rotation: -50,
+//       },
+//       {
+//         id: "text3",
+//         content: "Kelvin",
+//         xPercent: 67,
+//         yPercent: 43,
+//         rotation: -20,
+//       },
+//       {
+//         id: "text4",
+//         content: "Emma",
+//         xPercent: 68,
+//         yPercent: 54,
+//         rotation: 0,
+//       },
+//       {
+//         id: "text5",
+//         content: "Jake",
+//         xPercent: 59,
+//         yPercent: 66,
+//         rotation: 45,
+//       },
+//     ],
+//   },
+//   // Configuration for 5 kids
+//   5: {
+//     textFields: [
+//       {
+//         id: "text1",
+//         content: "Grandpa",
+//         xPercent: 36,
+//         yPercent: 51,
+//         rotation: 5,
+//       },
+//       {
+//         id: "text2",
+//         content: "Sarah",
+//         xPercent: 46,
+//         yPercent: 29,
+//         rotation: -80,
+//       },
+//       {
+//         id: "text3",
+//         content: "Kelvin",
+//         xPercent: 61,
+//         yPercent: 37,
+//         rotation: -35,
+//       },
+//       {
+//         id: "text4",
+//         content: "Emma",
+//         xPercent: 63,
+//         yPercent: 49,
+//         rotation: -10,
+//       },
+//       {
+//         id: "text5",
+//         content: "Jake",
+//         xPercent: 59,
+//         yPercent: 59,
+//         rotation: 25,
+//       },
+//       {
+//         id: "text6",
+//         content: "Lily",
+//         xPercent: 47,
+//         yPercent: 66,
+//         rotation: 60,
+//       },
+//     ],
+//   },
+//   // Configuration for 6 kids
+//   6: {
+//     textFields: [
+//       {
+//         id: "text1",
+//         content: "Grandpa",
+//         xPercent: 37,
+//         yPercent: 51,
+//         rotation: 5,
+//       },
+//       {
+//         id: "text2",
+//         content: "Sarah",
+//         xPercent: 45,
+//         yPercent: 28,
+//         rotation: -90,
+//       },
+//       {
+//         id: "text3",
+//         content: "Kelvin",
+//         xPercent: 57,
+//         yPercent: 30,
+//         rotation: -70,
+//       },
+//       {
+//         id: "text4",
+//         content: "Emma",
+//         xPercent: 67,
+//         yPercent: 41,
+//         rotation: -30,
+//       },
+//       {
+//         id: "text5",
+//         content: "Jake",
+//         xPercent: 64,
+//         yPercent: 55,
+//         rotation: 25,
+//       },
+//       {
+//         id: "text6",
+//         content: "Lily",
+//         xPercent: 56,
+//         yPercent: 64.5,
+//         rotation: 50,
+//       },
+//       {
+//         id: "text7",
+//         content: "Noah",
+//         xPercent: 44,
+//         yPercent: 68,
+//         rotation: 86,
+//       },
+//     ],
+//   },
+// };
 
 // Default values
 let activeKidsCount = 1; // Start with 1 kids
 let currentTemplate = templates[activeKidsCount];
-let currentColor = "Ceramic Yellow"; // Default color
+let currentColor = "Ceramic Black"; // Default color
 
 // DOM elements
 const baseImage = document.getElementById("baseImage");
@@ -377,7 +597,7 @@ function updateColorOptions() {
     labelText.className = "option-text";
     labelText.textContent = color;
 
-    if (color.toLowerCase() === "ceramic yellow") {
+    if (color.toLowerCase() === "ceramic black") {
       // Yellow color: allow interaction
       radioInput.disabled = false;
 
@@ -441,6 +661,9 @@ function positionTextElements() {
     const yPos = (field.yPercent / 100) * containerHeight;
 
     // Apply position and rotation
+    if (field.id === "text1") {
+      textElement.style.fontSize = "17px";
+    }
     textElement.style.left = `${xPos}px`;
     textElement.style.top = `${yPos}px`;
     textElement.style.transform = `translate(-50%, -50%) rotate(${

@@ -3,17 +3,518 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cookie&display=swap"
+    <!-- <link
+      href="https://fonts.cdnfonts.com/css/dainty-Dainty-fusion"
       rel="stylesheet"
-    />
+    /> -->
+
     <link rel="stylesheet" href="styles.css" />
-    <title>Real-time In-Page Shopify Store Product Customizer</title>
+    <style>
+      /* Shopify-inspired styling system */
+      :root {
+        /* Colors */
+        --color-primary: #008060;
+        --color-primary-hover: #006e52;
+        --color-primary-focus: rgba(0, 128, 96, 0.15);
+        --color-secondary: #5c6ac4;
+        --color-secondary-hover: #5c6ac4;
+        --color-background: #f6f6f7;
+        --color-surface: #ffffff;
+        --color-text: #212b36;
+        --color-text-subdued: #637381;
+        --color-border: #dfe3e8;
+        --color-backdrop: rgba(33, 43, 54, 0.5);
+
+        /* Shadows */
+        --shadow-base: 0px 0px 0px 1px rgba(63, 63, 68, 0.05),
+          0px 1px 3px 0px rgba(63, 63, 68, 0.15);
+        --shadow-deep: 0px 2px 16px rgba(33, 43, 54, 0.08);
+        --shadow-button: 0px 2px 5px rgba(0, 0, 0, 0.08);
+
+        /* Spacing */
+        --spacing-none: 0;
+        --spacing-extra-tight: 0.25rem;
+        --spacing-tight: 0.5rem;
+        --spacing-base: 1rem;
+        --spacing-loose: 1.5rem;
+        --spacing-extra-loose: 2rem;
+
+        /* Typography */
+        --font-size-heading: 1.5rem;
+        --font-size-subheading: 1.125rem;
+        --font-size-base: 1rem;
+        --font-size-small: 0.875rem;
+
+        /* Radius */
+        --radius-small: 4px;
+        --radius-base: 8px;
+        --radius-large: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "San Francisco",
+          "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      }
+
+      @font-face {
+        font-family: "Dainty";
+        src: url("DaintyFusion.otf") format("opentype");
+      }
+
+      body {
+        padding: 0;
+        background-color: var(--color-background);
+        color: var(--color-text);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-extra-loose);
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: var(--spacing-extra-loose);
+      }
+
+      h1 {
+        font-weight: 600;
+        color: var(--color-text);
+        margin-bottom: var(--spacing-tight);
+        font-size: var(--font-size-heading);
+      }
+
+      .subtitle {
+        color: var(--color-text-subdued);
+        font-weight: 400;
+        font-size: var(--font-size-base);
+      }
+
+      .customizer-container {
+        background-color: var(--color-surface);
+        border-radius: var(--radius-large);
+        box-shadow: var(--shadow-base);
+        overflow: hidden;
+        height: calc(
+          100vh - 150px
+        ); /* Adjust height to fit viewport minus header space */
+        min-height: 500px; /* Minimum height to ensure content is visible */
+        display: flex;
+        flex-direction: column;
+      }
+
+      .customizer {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+
+      .image-container {
+        position: relative;
+        width: 100%;
+        background-color: var(--color-background);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: var(--spacing-extra-loose);
+        overflow: hidden;
+        height: 70%;
+        flex: 1;
+      }
+
+      .image-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+      }
+
+      .base-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .text-overlay {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+        color: #000000;
+        font-size: 10px;
+        font-family: "Dainty";
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
+
+      .controls {
+        width: 100%;
+        padding: var(--spacing-extra-loose);
+        background-color: var(--color-surface);
+        border-top: 1px solid var(--color-border);
+        overflow-y: auto;
+        height: 30%;
+        flex-shrink: 0;
+      }
+
+      .product-title {
+        font-size: var(--font-size-heading);
+        margin-bottom: var(--spacing-loose);
+        color: var(--color-text);
+        font-weight: 400;
+        line-height: calc(1 + 0.3 / max(1, 1));
+      }
+
+      .form-group {
+        margin-bottom: var(--spacing-loose);
+      }
+
+      label {
+        display: block;
+        margin-bottom: var(--spacing-tight);
+        font-weight: 500;
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: var(--spacing-base);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-base);
+        font-size: var(--font-size-base);
+        margin-bottom: var(--spacing-tight);
+        color: var(--color-text);
+        transition: all 0.2s ease;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px var(--color-primary-focus);
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: var(--color-primary);
+        color: white;
+        padding: var(--spacing-base) var(--spacing-loose);
+        font-size: var(--font-size-base);
+        font-weight: 500;
+        border: none;
+        border-radius: var(--radius-base);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        text-decoration: none;
+        width: 100%;
+        box-shadow: var(--shadow-button);
+        margin-bottom: var(--spacing-extra-loose);
+      }
+
+      .btn:hover {
+        background-color: var(--color-primary-hover);
+        transform: translateY(-2px);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: var(--spacing-base);
+        color: var(--color-text-subdued);
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 3px solid rgba(0, 128, 96, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--color-primary);
+        animation: spin 1s ease-in-out infinite;
+        margin-right: var(--spacing-tight);
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .option-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-tight);
+        margin-bottom: var(--spacing-base);
+      }
+
+      .option-item {
+        flex: 0 0 auto;
+        position: relative;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        padding: var(--spacing-tight) var(--spacing-base);
+        cursor: pointer;
+        font-size: var(--font-size-small);
+        transition: all 0.2s ease;
+        background-color: var(--color-surface);
+        text-align: center;
+        user-select: none;
+      }
+
+      .option-item input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .option-item:hover {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+      }
+
+      .option-item.disabled {
+        position: relative;
+        opacity: 0.75;
+        border-color: var(--color-primary);
+        pointer-events: none;
+        cursor: not-allowed;
+      }
+
+      .option-item.disabled::after {
+        content: "";
+        position: absolute;
+        top: 10%;
+        left: 10%;
+        width: 80%;
+        height: 2px;
+        background-color: red;
+        transform: translateY(15px);
+        z-index: 2;
+      }
+
+      .option-item.selected {
+        background-color: #1a1a1a;
+        border-color: #1a1a1a;
+        color: white;
+      }
+
+      .color-options {
+        margin-bottom: var(--spacing-base);
+      }
+
+      .kids-options {
+        margin-bottom: var(--spacing-loose);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--color-backdrop);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: var(--spacing-base);
+      }
+
+      .modal {
+        background-color: var(--color-surface);
+        border-radius: var(--radius-large);
+        max-width: 90%;
+        width: 600px;
+        max-height: 90vh;
+        overflow: hidden;
+        box-shadow: var(--shadow-deep);
+        padding: var(--spacing-extra-loose);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: var(--spacing-base);
+        right: var(--spacing-base);
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--color-text-subdued);
+        transition: color 0.2s ease;
+        z-index: 1;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      .modal-close:hover {
+        color: var(--color-text);
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .modal-title {
+        font-size: var(--font-size-subheading);
+        margin-bottom: var(--spacing-loose);
+        color: var(--color-text);
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .result-image {
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: var(--spacing-loose);
+        background-color: var(--color-background);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .result-image img {
+        max-width: 100%;
+        max-height: 50vh;
+        object-fit: contain;
+        display: block;
+      }
+
+      .download-btn {
+        background-color: var(--color-secondary);
+        margin-top: var(--spacing-base);
+      }
+
+      .download-btn:hover {
+        background-color: var(--color-secondary-hover);
+      }
+
+      /* Skeleton loader */
+      .skeleton-loader {
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e0e0e0 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: var(--radius-base);
+        height: 300px;
+        width: 100%;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      .canvas-container {
+        display: none;
+      }
+
+      /* ADDED: Print Canvas Container */
+      .print-canvas-container {
+        display: none;
+        position: absolute;
+        visibility: hidden;
+      }
+
+      /* Custom button styles for Print Download Button */
+      .print-download-btn {
+        background-color: #5c6ac4;
+        margin-top: var(--spacing-tight);
+        margin-bottom: var(--spacing-loose);
+      }
+
+      .print-download-btn:hover {
+        background-color: #4959bd;
+      }
+
+      /* Multiple buttons layout */
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-base);
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .customizer-container {
+          height: auto;
+          flex-direction: column;
+        }
+
+        .customizer {
+          flex-direction: column;
+          height: auto;
+        }
+
+        .image-container {
+          position: relative; /* Remove sticky positioning on mobile */
+          width: 100%;
+          border-radius: var(--radius-large) var(--radius-large) 0 0;
+          padding: var(--spacing-loose);
+          height: auto;
+        }
+
+        .controls {
+          width: 100%;
+          border-radius: 0 0 var(--radius-large) var(--radius-large);
+          border-left: none;
+          border-top: 1px solid var(--color-border);
+          height: auto;
+          max-height: none;
+          overflow-y: visible; /* Remove scrolling on mobile */
+        }
+
+        .text-overlay {
+          font-size: 8px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: var(--spacing-base);
+        }
+
+        .text-overlay {
+          font-size: 6px;
+        }
+
+        .modal {
+          padding: var(--spacing-loose);
+        }
+      }
+    </style>
+    <title>Print File Customizer</title>
   </head>
   <body>
     <div class="container">
       <header>
-        <h1>Customizer By 10daer</h1>
+        <h1>Print Customizer By 10daer</h1>
         <p class="subtitle">
           Creating a personalized mug with your own custom text
         </p>
@@ -25,7 +526,7 @@
             <div class="image-wrapper">
               <img
                 src=""
-                alt="Customizable mug"
+                alt="Customizable mug print template"
                 class="base-image"
                 id="baseImage"
               />
@@ -39,84 +540,22 @@
               Dad!
             </h2>
 
-            <!-- Color options -->
-            <div class="form-group">
-              <label>Color</label>
-              <div class="option-group color-options" id="color-options">
-                <label class="option-item selected" for="color-yellow">
-                  <input
-                    type="radio"
-                    id="color-yellow"
-                    name="color"
-                    value="Ceramic Yellow"
-                    checked
-                  />
-                  <span class="option-text">Ceramic Yellow</span>
-                </label>
-                <label class="option-item" for="color-pink">
-                  <input
-                    type="radio"
-                    id="color-pink"
-                    name="color"
-                    value="Ceramic Pink"
-                  />
-                  <span class="option-text">Ceramic Pink</span>
-                </label>
-                <label class="option-item" for="color-green">
-                  <input
-                    type="radio"
-                    id="color-green"
-                    name="color"
-                    value="Ceramic Green"
-                  />
-                  <span class="option-text">Ceramic Green</span>
-                </label>
-                <label class="option-item" for="color-red">
-                  <input
-                    type="radio"
-                    id="color-red"
-                    name="color"
-                    value="Ceramic Red"
-                  />
-                  <span class="option-text">Ceramic Red</span>
-                </label>
-                <label class="option-item" for="color-black">
-                  <input
-                    type="radio"
-                    id="color-black"
-                    name="color"
-                    value="Ceramic Black"
-                  />
-                  <span class="option-text">Ceramic Black</span>
-                </label>
-                <label class="option-item" for="color-blue">
-                  <input
-                    type="radio"
-                    id="color-blue"
-                    name="color"
-                    value="Ceramic Blue"
-                  />
-                  <span class="option-text">Ceramic Blue</span>
-                </label>
-              </div>
-            </div>
-
             <!-- Number of kids options -->
             <div class="form-group">
               <label>Number of Kids</label>
               <div class="option-group kids-options">
-                <label class="option-item selected" for="kids-1">
-                  <input
-                    type="radio"
-                    id="kids-1"
-                    name="kids"
-                    value="1"
-                    checked
-                  />
+                <label class="option-item" for="kids-1">
+                  <input type="radio" id="kids-1" name="kids" value="1" />
                   <span class="option-text">1 Kid</span>
                 </label>
-                <label class="option-item" for="kids-2">
-                  <input type="radio" id="kids-2" name="kids" value="2" />
+                <label class="option-item selected" for="kids-2">
+                  <input
+                    type="radio"
+                    id="kids-2"
+                    name="kids"
+                    value="2"
+                    checked
+                  />
                   <span class="option-text">2 Kids</span>
                 </label>
                 <label class="option-item" for="kids-3">
@@ -142,8 +581,11 @@
               <!-- Text input fields will be added dynamically -->
             </div>
 
-            <!-- Input fields will be added dynamically -->
-            <button class="btn" id="generateBtn">Generate Preview</button>
+            <!-- Download button -->
+            <button class="btn print-download-btn" id="downloadPrintBtn">
+              Download Print File
+            </button>
+
             <div class="loading" id="loading">
               <span class="loading-spinner"></span>
               Creating your design...
@@ -153,26 +595,522 @@
       </div>
     </div>
 
-    <!-- Modal for displaying result -->
-    <div class="modal-overlay" id="resultModal">
-      <div class="modal">
-        <button class="modal-close" id="closeModal">×</button>
-        <h2 class="modal-title">Your Customized Mug</h2>
-        <div id="resultImage" class="result-image">
-          <div class="skeleton-loader" id="skeletonLoader"></div>
-          <!-- Result image will be inserted here -->
-        </div>
-        <a class="btn download-btn" id="downloadLink" download="custom-mug.png">
-          Download Design
-        </a>
-      </div>
-    </div>
-
+    <!-- Canvas container (hidden) -->
     <div class="canvas-container">
       <canvas id="canvas"></canvas>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+      // Print templates configuration
+      const printTemplates = {
+        1: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercentLeft: 12,
+              xPercentRight: 67,
+              yPercent: 51,
+              rotation: 5,
+              fontSize: 13,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercentLeft: 39,
+              xPercentRight: 93,
+              yPercent: 50,
+              rotation: 5,
+              fontSize: 12,
+            },
+          ],
+        },
+        2: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercentLeft: 12,
+              xPercentRight: 67,
+              yPercent: 51,
+              rotation: 5,
+              fontSize: 13,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercentLeft: 38,
+              xPercentRight: 93,
+              yPercent: 36,
+              rotation: -15,
+              fontSize: 12,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercentLeft: 38,
+              xPercentRight: 93,
+              yPercent: 63,
+              rotation: 15,
+              fontSize: 12,
+            },
+          ],
+        },
+        3: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercentLeft: 12,
+              xPercentRight: 67,
+              yPercent: 51,
+              rotation: 5,
+              fontSize: 13,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercentLeft: 36,
+              xPercentRight: 91,
+              yPercent: 26,
+              rotation: -18,
+              fontSize: 11,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercentLeft: 38,
+              xPercentRight: 93,
+              yPercent: 49,
+              rotation: 0,
+              fontSize: 11,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercentLeft: 34,
+              xPercentRight: 89,
+              yPercent: 75,
+              rotation: 32,
+              fontSize: 11,
+            },
+          ],
+        },
+        4: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercentLeft: 12,
+              xPercentRight: 67,
+              yPercent: 51,
+              rotation: 5,
+              fontSize: 13,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercentLeft: 30,
+              xPercentRight: 85,
+              yPercent: 13,
+              rotation: -45,
+              fontSize: 11,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercentLeft: 37,
+              xPercentRight: 92,
+              yPercent: 37,
+              rotation: -10,
+              fontSize: 11,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercentLeft: 37,
+              xPercentRight: 92,
+              yPercent: 58,
+              rotation: 7,
+              fontSize: 11,
+            },
+            {
+              id: "text5",
+              content: "Jake",
+              xPercentLeft: 30,
+              xPercentRight: 85,
+              yPercent: 80,
+              rotation: 40,
+              fontSize: 11,
+            },
+          ],
+        },
+        5: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercentLeft: 12,
+              xPercentRight: 67,
+              yPercent: 51,
+              rotation: 5,
+              fontSize: 13,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercentLeft: 23.5,
+              xPercentRight: 78.5,
+              yPercent: 10,
+              rotation: -80,
+              fontSize: 10,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercentLeft: 34,
+              xPercentRight: 89,
+              yPercent: 26,
+              rotation: -24,
+              fontSize: 10,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercentLeft: 36,
+              xPercentRight: 91,
+              yPercent: 48,
+              rotation: 0,
+              fontSize: 10,
+            },
+            {
+              id: "text5",
+              content: "Jake",
+              xPercentLeft: 33,
+              xPercentRight: 88,
+              yPercent: 68,
+              rotation: 24,
+              fontSize: 10,
+            },
+            {
+              id: "text6",
+              content: "Lily",
+              xPercentLeft: 24.5,
+              xPercentRight: 79.5,
+              yPercent: 80,
+              rotation: 60,
+              fontSize: 10,
+            },
+          ],
+        },
+        6: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercentLeft: 12,
+              xPercentRight: 67,
+              yPercent: 51,
+              rotation: 5,
+              fontSize: 13,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercentLeft: 20,
+              xPercentRight: 74,
+              yPercent: 11,
+              rotation: -95,
+              fontSize: 10,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercentLeft: 29,
+              xPercentRight: 84,
+              yPercent: 12,
+              rotation: -60,
+              fontSize: 10,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercentLeft: 36,
+              xPercentRight: 91,
+              yPercent: 34,
+              rotation: -20,
+              fontSize: 10,
+            },
+            {
+              id: "text5",
+              content: "Jake",
+              xPercentLeft: 34,
+              xPercentRight: 89,
+              yPercent: 59,
+              rotation: 25,
+              fontSize: 10,
+            },
+            {
+              id: "text6",
+              content: "Lily",
+              xPercentLeft: 28,
+              xPercentRight: 83,
+              yPercent: 78,
+              rotation: 55,
+              fontSize: 10,
+            },
+            {
+              id: "text7",
+              content: "Noah",
+              xPercentLeft: 19,
+              xPercentRight: 74,
+              yPercent: 83,
+              rotation: 95,
+              fontSize: 10,
+            },
+          ],
+        },
+      };
+
+      // DOM elements
+      const baseImage = document.getElementById("baseImage");
+      const imageContainer = document.getElementById("imageContainer");
+      const textInputsContainer = document.getElementById("text-inputs");
+      const downloadPrintBtn = document.getElementById("downloadPrintBtn");
+      const loadingIndicator = document.getElementById("loading");
+      const canvas = document.getElementById("canvas");
+
+      // Global variables
+      let currentKids = 1;
+      let currentTemplate = printTemplates[currentKids];
+      let textOverlays = {};
+
+      // Initialize the application
+      function init() {
+        // Set initial image
+        updateImage();
+
+        // Add text input fields
+        createTextInputs();
+
+        // Add event listeners for number of kids options
+        document.querySelectorAll('input[name="kids"]').forEach((radio) => {
+          radio.addEventListener("change", handleKidsChange);
+        });
+
+        // Add event listener for download button
+        downloadPrintBtn.addEventListener("click", downloadPrintFile);
+
+        // Create the initial text overlays
+        createTextOverlays();
+      }
+
+      // Update image based on current configuration
+      function updateImage() {
+        const imageUrl = `./customizable/${currentKids}-kid${
+          currentKids > 1 ? "s" : ""
+        }.png`;
+        // const imageUrl = `./personalized/${currentKids}-kid${
+        //   currentKids > 1 ? "s" : ""
+        // }.png`;
+        baseImage.src = imageUrl;
+      }
+
+      // Create text input fields based on current template
+      function createTextInputs() {
+        // Clear existing inputs
+        textInputsContainer.innerHTML = "";
+
+        // Create inputs based on current template
+        currentTemplate.textFields.forEach((field) => {
+          const inputContainer = document.createElement("div");
+          inputContainer.classList.add("form-group");
+
+          const label = document.createElement("label");
+          label.textContent = `Name for ${
+            field.id === "text1" ? "Dad" : `Kid ${field.id.replace("text", "")}`
+          }`;
+          label.setAttribute("for", field.id);
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.id = field.id;
+          input.value = field.content;
+          input.maxLength = 12; // Limit text length
+          input.addEventListener("input", handleTextInput);
+
+          inputContainer.appendChild(label);
+          inputContainer.appendChild(input);
+          textInputsContainer.appendChild(inputContainer);
+        });
+      }
+
+      // Handle kids change
+      function handleKidsChange(e) {
+        // Update selected style
+        document
+          .querySelectorAll(".kids-options .option-item")
+          .forEach((item) => {
+            item.classList.remove("selected");
+          });
+        e.target.parentElement.classList.add("selected");
+
+        // Update current number of kids
+        currentKids = parseInt(e.target.value);
+        currentTemplate = printTemplates[currentKids];
+
+        // Update image and inputs
+        updateImage();
+        createTextInputs();
+
+        // Remove existing overlays
+        document.querySelectorAll(".text-overlay").forEach((overlay) => {
+          overlay.remove();
+        });
+
+        // Create new overlays
+        createTextOverlays();
+      }
+
+      // Handle text input
+      function handleTextInput(e) {
+        const id = e.target.id;
+        const value = e.target.value;
+
+        // Update overlay text for both left and right overlays
+        if (textOverlays[id + "_left"]) {
+          textOverlays[id + "_left"].textContent = value;
+        }
+        if (textOverlays[id + "_right"]) {
+          textOverlays[id + "_right"].textContent = value;
+        }
+
+        // Also update the template data
+        currentTemplate.textFields.forEach((field) => {
+          if (field.id === id) {
+            field.content = value;
+          }
+        });
+      }
+
+      // Create text overlays based on current template
+      function createTextOverlays() {
+        currentTemplate.textFields.forEach((field) => {
+          // Create left overlay
+          const leftOverlay = document.createElement("div");
+          leftOverlay.classList.add("text-overlay");
+          leftOverlay.id = `overlay-${field.id}_left`;
+          leftOverlay.textContent = field.content;
+          leftOverlay.style.left = `${field.xPercentLeft}%`;
+          leftOverlay.style.top = `${field.yPercent}%`;
+          leftOverlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+          leftOverlay.style.fontSize = `${field.fontSize}px`;
+
+          // Create right overlay
+          const rightOverlay = document.createElement("div");
+          rightOverlay.classList.add("text-overlay");
+          rightOverlay.id = `overlay-${field.id}_right`;
+          rightOverlay.textContent = field.content;
+          rightOverlay.style.left = `${field.xPercentRight}%`;
+          rightOverlay.style.top = `${field.yPercent}%`;
+          rightOverlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+          rightOverlay.style.fontSize = `${field.fontSize}px`;
+
+          // Add overlays to image container
+          document.querySelector(".image-wrapper").appendChild(leftOverlay);
+          document.querySelector(".image-wrapper").appendChild(rightOverlay);
+
+          // Store references to overlays
+          textOverlays[field.id + "_left"] = leftOverlay;
+          textOverlays[field.id + "_right"] = rightOverlay;
+        });
+      }
+
+      // Download print file
+      function downloadPrintFile() {
+        loadingIndicator.style.display = "block";
+
+        const ctx = canvas.getContext("2d");
+        canvas.width = 2500;
+        canvas.height = 1050;
+        // canvas.width = 2717;
+        // canvas.height = 1146;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const printTemplateImg = new Image();
+        printTemplateImg.crossOrigin = "Anonymous";
+
+        printTemplateImg.onload = function () {
+          // Draw the base template
+          ctx.drawImage(printTemplateImg, 0, 0, canvas.width, canvas.height);
+
+          // Set font and color for text
+          ctx.fillStyle = "#000000";
+          ctx.font = "100px 'Dainty'";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+
+          // Draw text overlays on canvas
+          currentTemplate.textFields.forEach((field) => {
+            const input = document.getElementById(field.id);
+            const text = input ? input.value : field.content;
+            if (!text) return;
+
+            // Calculate actual positions
+            const leftX = (field.xPercentLeft / 100) * canvas.width;
+            const rightX = (field.xPercentRight / 100) * canvas.width;
+            const y = (field.yPercent / 100) * canvas.height;
+
+            // Set font size based on field configuration
+            const fontSize = field.fontSize * 8; // Scale up for canvas
+            ctx.font = `${fontSize}px 'Dainty`;
+
+            // Save context for rotation
+            ctx.save();
+
+            // Draw left text
+            ctx.translate(leftX, y);
+            ctx.rotate((field.rotation * Math.PI) / 180);
+            ctx.fillText(text, 0, 0);
+            ctx.restore();
+
+            // Draw right text
+            ctx.save();
+            ctx.translate(rightX, y);
+            ctx.rotate((field.rotation * Math.PI) / 180);
+            ctx.fillText(text, 0, 0);
+            ctx.restore();
+          });
+
+          // Create download link
+          const dataURL = canvas.toDataURL("image/png");
+          const downloadLink = document.createElement("a");
+          downloadLink.href = dataURL;
+          downloadLink.download = `print-mug-${currentKids}-kids.png`;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          loadingIndicator.style.display = "none";
+        };
+
+        printTemplateImg.onerror = function () {
+          loadingIndicator.style.display = "none";
+          alert("Error loading print template. Please try again.");
+          console.error(
+            "Failed to load print template:",
+            `./${currentKids}-kid${currentKids > 1 ? "s" : ""}.png`
+          );
+        };
+
+        const imageUrl = `./${currentKids}-kid${
+          currentKids > 1 ? "s" : ""
+        }.png`;
+        printTemplateImg.src = imageUrl;
+      }
+
+      // Start the application when DOM is loaded
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
   </body>
 </html>

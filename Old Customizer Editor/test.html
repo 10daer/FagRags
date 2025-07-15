@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mug Template Editor</title>
+    <style>
+      /* Modern styling system */
+      :root {
+        /* Colors */
+        --color-primary: #008060;
+        --color-primary-hover: #006e52;
+        --color-primary-focus: rgba(0, 128, 96, 0.15);
+        --color-secondary: #5c6ac4;
+        --color-secondary-hover: #5c6ac4;
+        --color-background: #f6f6f7;
+        --color-surface: #ffffff;
+        --color-text: #212b36;
+        --color-text-subdued: #637381;
+        --color-border: #dfe3e8;
+        --color-backdrop: rgba(33, 43, 54, 0.5);
+        --color-danger: #d72c0d;
+        --color-warning: #ffc453;
+
+        /* Shadows */
+        --shadow-base: 0px 0px 0px 1px rgba(63, 63, 68, 0.05),
+          0px 1px 3px 0px rgba(63, 63, 68, 0.15);
+        --shadow-deep: 0px 2px 16px rgba(33, 43, 54, 0.08);
+        --shadow-button: 0px 2px 5px rgba(0, 0, 0, 0.08);
+
+        /* Spacing */
+        --spacing-none: 0;
+        --spacing-extra-tight: 0.25rem;
+        --spacing-tight: 0.5rem;
+        --spacing-base: 1rem;
+        --spacing-loose: 1.5rem;
+        --spacing-extra-loose: 2rem;
+
+        /* Typography */
+        --font-size-heading: 1.5rem;
+        --font-size-subheading: 1.125rem;
+        --font-size-base: 1rem;
+        --font-size-small: 0.875rem;
+
+        /* Radius */
+        --radius-small: 4px;
+        --radius-base: 8px;
+        --radius-large: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "San Francisco",
+          "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      }
+
+      @font-face {
+        font-family: "PatrickHand";
+        src: url("PatrickHand.ttf") format("truetype");
+      }
+
+      body {
+        padding: 0;
+        background-color: var(--color-background);
+        color: var(--color-text);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--spacing-extra-loose);
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: var(--spacing-extra-loose);
+      }
+
+      h1 {
+        font-weight: 600;
+        color: var(--color-text);
+        margin-bottom: var(--spacing-tight);
+        font-size: var(--font-size-heading);
+      }
+
+      .subtitle {
+        color: var(--color-text-subdued);
+        font-weight: 400;
+        font-size: var(--font-size-base);
+      }
+
+      .editor-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-extra-loose);
+        height: auto;
+        min-height: 600px;
+      }
+
+      .preview-section {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+
+      @media (min-width: 768px) {
+        .editor-container {
+          height: calc(100vh - 200px);
+          flex-direction: row;
+          min-height: 100%;
+        }
+
+        .preview-section {
+          flex-direction: row;
+          height: auto;
+        }
+
+        .image-container {
+          position: sticky;
+          top: 0;
+          width: 50%;
+          height: auto;
+        }
+
+        .controls-section {
+          width: 50%;
+        }
+      }
+
+      .skeleton-loader {
+        width: 100%;
+        padding-top: 75%; /* aspect ratio placeholder */
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e0e0e0 50%,
+          #f0f0f0 75%
+        );
+        background-size: 400% 100%;
+        animation: skeleton 1.2s ease-in-out infinite;
+        border-radius: 8px;
+      }
+
+      @keyframes skeleton {
+        0% {
+          background-position: 100% 0;
+        }
+        100% {
+          background-position: -100% 0;
+        }
+      }
+
+      .controls-section {
+        background-color: var(--color-surface);
+        border-radius: var(--radius-large);
+        box-shadow: var(--shadow-base);
+        overflow-y: auto;
+        padding: var(--spacing-extra-loose);
+      }
+
+      .image-container {
+        position: relative;
+        width: 100%;
+        background-color: var(--color-background);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: var(--spacing-extra-loose);
+        overflow: hidden;
+        height: 100%;
+        flex: 1;
+      }
+
+      /* .image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+} */
+      .image-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 1108px;
+        aspect-ratio: 2316 / 1134; /* Match printFile PNG aspect ratio */
+      }
+
+      .base-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* .hide {
+  display: none !important;
+} */
+
+      .text-overlay {
+        position: absolute;
+        transform: translate(0%, -50%);
+        line-height: 1;
+        color: #000000;
+        font-size: clamp(8px, 1.25vw, 14px);
+        font-family: "PatrickHand", serif;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        cursor: move;
+        z-index: 10;
+        border: 1px solid transparent;
+      }
+
+      .text-overlay:hover {
+        border-color: var(--color-primary);
+        background-color: rgba(0, 128, 96, 0.1);
+      }
+
+      .text-overlay.selected {
+        border-color: var(--color-primary);
+        background-color: rgba(0, 128, 96, 0.2);
+        box-shadow: 0 0 0 1px var(--color-primary);
+      }
+
+      .text-overlay.dragging {
+        z-index: 1000;
+        cursor: grabbing;
+      }
+
+      .text-overlay:not(.selected):not(.dragging) {
+        border: none;
+        background-color: transparent;
+        box-shadow: none;
+      }
+
+      .option-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-tight);
+        margin-bottom: var(--spacing-base);
+      }
+
+      .option-item {
+        flex: 0 0 auto;
+        position: relative;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        padding: var(--spacing-tight) var(--spacing-base);
+        cursor: pointer;
+        font-size: var(--font-size-small);
+        transition: all 0.2s ease;
+        background-color: var(--color-surface);
+        text-align: center;
+        user-select: none;
+      }
+
+      .option-item input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .option-item:hover {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+      }
+
+      .option-item.selected {
+        background-color: #1a1a1a;
+        border-color: #1a1a1a;
+        color: white;
+      }
+
+      .form-group {
+        margin-bottom: var(--spacing-loose);
+      }
+
+      label {
+        display: block;
+        margin-bottom: var(--spacing-tight);
+        font-weight: 500;
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: var(--spacing-base);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-base);
+        font-size: var(--font-size-base);
+        margin-bottom: var(--spacing-tight);
+        color: var(--color-text);
+        transition: all 0.2s ease;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px var(--color-primary-focus);
+      }
+
+      .control-group {
+        background-color: var(--color-background);
+        border-radius: var(--radius-base);
+        padding: var(--spacing-base);
+        margin-bottom: var(--spacing-loose);
+        border: 1px solid var(--color-border);
+      }
+
+      .control-group.active {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+      }
+
+      .control-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--spacing-tight);
+        align-items: center;
+        margin-bottom: var(--spacing-tight);
+      }
+
+      .control-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .control-label {
+        font-size: var(--font-size-small);
+        font-weight: 500;
+        color: var(--color-text-subdued);
+      }
+
+      .control-buttons {
+        display: flex;
+        gap: var(--spacing-extra-tight);
+      }
+
+      .control-btn {
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--color-border);
+        background-color: var(--color-surface);
+        border-radius: var(--radius-small);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--color-text);
+        transition: all 0.2s ease;
+      }
+
+      .control-btn:hover {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+      }
+
+      .control-btn:active {
+        transform: scale(0.95);
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: var(--color-primary);
+        color: white;
+        padding: var(--spacing-base) var(--spacing-loose);
+        font-size: var(--font-size-base);
+        font-weight: 500;
+        border: none;
+        border-radius: var(--radius-base);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        text-decoration: none;
+        width: 100%;
+        box-shadow: var(--shadow-button);
+        margin-bottom: var(--spacing-base);
+      }
+
+      .btn:hover {
+        background-color: var(--color-primary-hover);
+        transform: translateY(-2px);
+      }
+
+      .btn.secondary {
+        background-color: var(--color-secondary);
+      }
+
+      .btn.secondary:hover {
+        background-color: var(--color-secondary-hover);
+      }
+
+      .text-input-group {
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-base);
+        padding: var(--spacing-base);
+        margin-bottom: var(--spacing-loose);
+        background-color: var(--color-surface);
+      }
+
+      .text-input-group.active {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 1px var(--color-primary-focus);
+      }
+
+      .section-title {
+        font-size: var(--font-size-subheading);
+        margin-bottom: var(--spacing-loose);
+        color: var(--color-text);
+        font-weight: 600;
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: var(--spacing-tight);
+      }
+
+      /* Category selector styles */
+      .category-variants {
+        display: flex;
+        gap: var(--spacing-tight);
+        margin-bottom: var(--spacing-base);
+      }
+
+      .category-variant {
+        padding: var(--spacing-tight) var(--spacing-base);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius-base);
+        background-color: var(--color-surface);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .category-variant.selected {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+        color: var(--color-primary);
+      }
+
+      /* Color variant styles */
+      .color-variant {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid var(--color-border);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-block;
+        margin-right: var(--spacing-tight);
+      }
+
+      .color-variant.selected {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px var(--color-primary-focus);
+      }
+
+      .color-variants {
+        display: flex;
+        gap: var(--spacing-tight);
+        margin-bottom: var(--spacing-base);
+      }
+
+      @media (max-width: 1200px) {
+        .editor-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr auto;
+        }
+
+        .controls-section {
+          max-height: 500px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: var(--spacing-base);
+        }
+
+        .text-overlay {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Mug Template Editor</h1>
+        <p class="subtitle">
+          Drag and adjust text overlays to create custom mug templates
+        </p>
+      </header>
+
+      <div class="editor-container">
+        <div class="preview-section">
+          <div class="image-container" id="imageContainer">
+            <div class="image-wrapper">
+              <!-- Loader -->
+              <div id="imageSkeleton" class="skeleton-loader"></div>
+
+              <img
+                src=""
+                alt="Customizable mug"
+                class="base-image"
+                id="baseImage"
+              />
+              <!-- Text overlays will be added dynamically -->
+            </div>
+          </div>
+
+          <div class="controls-section">
+            <div class="section-title">Template Configuration</div>
+
+            <!-- Category Selection -->
+            <div class="form-group">
+              <label>Category</label>
+              <div class="category-variants">
+                <div class="category-variant selected" data-category="soccer">
+                  Soccer
+                </div>
+                <div class="category-variant" data-category="tools">Tools</div>
+                <div class="category-variant" data-category="printFile">
+                  Print File
+                </div>
+              </div>
+            </div>
+
+            <!-- Color Variants -->
+            <div class="form-group">
+              <label>Color Variant</label>
+              <div class="color-variants">
+                <div
+                  class="color-variant selected"
+                  data-color="Black"
+                  style="background-color: #2c2c2c"
+                  title="Black Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Blue"
+                  style="background-color: #4a90e2"
+                  title="Blue Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Green"
+                  style="background-color: #7ed321"
+                  title="Green Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Pink"
+                  style="background-color: #ff69b4"
+                  title="Pink Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Red"
+                  style="background-color: #d0021b"
+                  title="Red Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Yellow"
+                  style="background-color: #f5a623"
+                  title="Yellow Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="White"
+                  style="background-color: #ffffff; border-color: #ccc"
+                  title="White Mug"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Number of Kids -->
+            <div class="form-group">
+              <label>Number of Kids</label>
+              <div class="option-group kids-options">
+                <label class="option-item selected" for="kids-1">
+                  <input
+                    type="radio"
+                    id="kids-1"
+                    name="kids"
+                    value="1"
+                    checked
+                  />
+                  <span class="option-text">1 Kid</span>
+                </label>
+                <label class="option-item" for="kids-2">
+                  <input type="radio" id="kids-2" name="kids" value="2" />
+                  <span class="option-text">2 Kids</span>
+                </label>
+                <label class="option-item" for="kids-3">
+                  <input type="radio" id="kids-3" name="kids" value="3" />
+                  <span class="option-text">3 Kids</span>
+                </label>
+                <label class="option-item" for="kids-4">
+                  <input type="radio" id="kids-4" name="kids" value="4" />
+                  <span class="option-text">4 Kids</span>
+                </label>
+                <label class="option-item" for="kids-5">
+                  <input type="radio" id="kids-5" name="kids" value="5" />
+                  <span class="option-text">5 Kids</span>
+                </label>
+                <label class="option-item" for="kids-6">
+                  <input type="radio" id="kids-6" name="kids" value="6" />
+                  <span class="option-text">6 Kids</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="section-title hide">Text Overlays</div>
+            <div id="text-controls" class="hide">
+              <!-- Text input controls will be added dynamically -->
+            </div>
+
+            <!-- Export Controls -->
+            <div class="section-title hide">Template Actions</div>
+            <button class="hide btn" id="exportBtn">
+              Export Template JSON
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Default templates configuration for both categories
+      const defaultTemplates = {
+        soccer: {
+          1: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 52,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 70,
+                yPercent: 50,
+                rotation: -5,
+                fontSize: 12,
+              },
+            ],
+          },
+          2: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 69,
+                yPercent: 45,
+                rotation: -16,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 55,
+                rotation: 6,
+                fontSize: 12,
+              },
+            ],
+          },
+          3: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 67,
+                yPercent: 39,
+                rotation: -35,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 70,
+                yPercent: 49,
+                rotation: -6,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 67,
+                yPercent: 61,
+                rotation: 28,
+                fontSize: 12,
+              },
+            ],
+          },
+          4: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 62,
+                yPercent: 35,
+                rotation: -55,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 70,
+                yPercent: 44,
+                rotation: -14,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 54,
+                rotation: 7,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 62,
+                yPercent: 65,
+                rotation: 45,
+                fontSize: 12,
+              },
+            ],
+          },
+          5: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 58,
+                yPercent: 33,
+                rotation: -75,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 67,
+                yPercent: 39,
+                rotation: -45,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 70,
+                yPercent: 50,
+                rotation: -1,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 66,
+                yPercent: 61,
+                rotation: 44,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 57,
+                yPercent: 66,
+                rotation: 73,
+                fontSize: 12,
+              },
+            ],
+          },
+          6: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 52,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 52.5,
+                yPercent: 33,
+                rotation: -90,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 63.5,
+                yPercent: 36,
+                rotation: -58,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 70,
+                yPercent: 45,
+                rotation: -24,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 68,
+                yPercent: 55,
+                rotation: 6,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 63,
+                yPercent: 64,
+                rotation: 47,
+                fontSize: 12,
+              },
+              {
+                id: "text7",
+                content: "Noah",
+                xPercent: 52,
+                yPercent: 67,
+                rotation: 89,
+                fontSize: 12,
+              },
+            ],
+          },
+        },
+        tools: {
+          1: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 54,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 70,
+                yPercent: 51,
+                rotation: -5,
+                fontSize: 12,
+              },
+            ],
+          },
+          2: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 51,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 69,
+                yPercent: 45,
+                rotation: -11,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 55,
+                rotation: 9,
+                fontSize: 12,
+              },
+            ],
+          },
+          3: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 53,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 66,
+                yPercent: 40,
+                rotation: -29,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 70,
+                yPercent: 50,
+                rotation: -2,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 67,
+                yPercent: 61.5,
+                rotation: 31,
+                fontSize: 12,
+              },
+            ],
+          },
+          4: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 53,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 61,
+                yPercent: 37,
+                rotation: -50,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 45.5,
+                rotation: -19,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 56,
+                rotation: 11,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 62,
+                yPercent: 66,
+                rotation: 48,
+                fontSize: 12,
+              },
+            ],
+          },
+          5: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 53,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 57,
+                yPercent: 34,
+                rotation: -75,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 67,
+                yPercent: 39.5,
+                rotation: -39,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 51,
+                rotation: 3,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 65,
+                yPercent: 61,
+                rotation: 43,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 56,
+                yPercent: 67,
+                rotation: 72,
+                fontSize: 12,
+              },
+            ],
+          },
+          6: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 52,
+                yPercent: 34,
+                rotation: -89,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 63,
+                yPercent: 36,
+                rotation: -57,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 45.5,
+                rotation: -23,
+                fontSize: 11,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 68,
+                yPercent: 55,
+                rotation: 8,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 62,
+                yPercent: 64,
+                rotation: 45,
+                fontSize: 12,
+              },
+              {
+                id: "text7",
+                content: "Noah",
+                xPercent: 52,
+                yPercent: 68,
+                rotation: 89,
+                fontSize: 12,
+              },
+            ],
+          },
+        },
+        toolsBlack: {
+          1: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 53,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 69,
+                yPercent: 51,
+                rotation: -5,
+                fontSize: 12,
+              },
+            ],
+          },
+          2: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 51,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 68,
+                yPercent: 45,
+                rotation: -11,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 68,
+                yPercent: 55,
+                rotation: 9,
+                fontSize: 12,
+              },
+            ],
+          },
+          3: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 53,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 65,
+                yPercent: 40,
+                rotation: -29,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 50,
+                rotation: -2,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 65,
+                yPercent: 62,
+                rotation: 31,
+                fontSize: 12,
+              },
+            ],
+          },
+          4: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 53,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 60,
+                yPercent: 36,
+                rotation: -50,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 68,
+                yPercent: 45,
+                rotation: -15,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 68,
+                yPercent: 56,
+                rotation: 11,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 61,
+                yPercent: 66,
+                rotation: 48,
+                fontSize: 12,
+              },
+            ],
+          },
+          5: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 55,
+                yPercent: 34,
+                rotation: -75,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 66,
+                yPercent: 39,
+                rotation: -39,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 68,
+                yPercent: 51,
+                rotation: 3,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 63,
+                yPercent: 61,
+                rotation: 43,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 55,
+                yPercent: 67,
+                rotation: 72,
+                fontSize: 12,
+              },
+            ],
+          },
+          6: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 40,
+                yPercent: 53,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 50,
+                yPercent: 33,
+                rotation: -90,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 62,
+                yPercent: 36,
+                rotation: -60,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 68,
+                yPercent: 45,
+                rotation: -28,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 67,
+                yPercent: 55,
+                rotation: 8,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 61,
+                yPercent: 64,
+                rotation: 45,
+                fontSize: 12,
+              },
+              {
+                id: "text7",
+                content: "Noah",
+                xPercent: 50,
+                yPercent: 68,
+                rotation: 89,
+                fontSize: 12,
+              },
+            ],
+          },
+        },
+        toolsWhite: {
+          1: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 53,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 70,
+                yPercent: 51,
+                rotation: -5,
+                fontSize: 12,
+              },
+            ],
+          },
+          2: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 51,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 70,
+                yPercent: 45,
+                rotation: -11,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 55,
+                rotation: 9,
+                fontSize: 12,
+              },
+            ],
+          },
+          3: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 53,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 66,
+                yPercent: 40,
+                rotation: -29,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 70,
+                yPercent: 50,
+                rotation: -2,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 67,
+                yPercent: 61,
+                rotation: 31,
+                fontSize: 12,
+              },
+            ],
+          },
+          4: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 53,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 61,
+                yPercent: 36,
+                rotation: -50,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 45,
+                rotation: -15,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 56,
+                rotation: 11,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 62,
+                yPercent: 66,
+                rotation: 48,
+                fontSize: 12,
+              },
+            ],
+          },
+          5: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 57,
+                yPercent: 34,
+                rotation: -75,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 67,
+                yPercent: 39,
+                rotation: -39,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 51,
+                rotation: 3,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 65,
+                yPercent: 61,
+                rotation: 43,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 56,
+                yPercent: 67,
+                rotation: 72,
+                fontSize: 12,
+              },
+            ],
+          },
+          6: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 52,
+                yPercent: 33,
+                rotation: -89,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 63,
+                yPercent: 36,
+                rotation: -57,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 45,
+                rotation: -19,
+                fontSize: 11,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 68,
+                yPercent: 55,
+                rotation: 8,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 62,
+                yPercent: 64,
+                rotation: 45,
+                fontSize: 12,
+              },
+              {
+                id: "text7",
+                content: "Noah",
+                xPercent: 51,
+                yPercent: 68,
+                rotation: 89,
+                fontSize: 12,
+              },
+            ],
+          },
+        },
+        soccerBlack: {
+          1: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 39,
+                yPercent: 52,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 69,
+                yPercent: 50,
+                rotation: -5,
+                fontSize: 12,
+              },
+            ],
+          },
+          2: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 40,
+                yPercent: 51,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 68,
+                yPercent: 45,
+                rotation: -10,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 68,
+                yPercent: 55,
+                rotation: 6,
+                fontSize: 12,
+              },
+            ],
+          },
+          3: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 40,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 65,
+                yPercent: 39,
+                rotation: -31,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 49,
+                rotation: -5,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 66,
+                yPercent: 61,
+                rotation: 30,
+                fontSize: 12,
+              },
+            ],
+          },
+          4: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 40,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 60,
+                yPercent: 35,
+                rotation: -54,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 44,
+                rotation: -14,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 68,
+                yPercent: 54,
+                rotation: 7,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 61,
+                yPercent: 65,
+                rotation: 45,
+                fontSize: 12,
+              },
+            ],
+          },
+          5: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 56,
+                yPercent: 33,
+                rotation: -75,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 66,
+                yPercent: 38,
+                rotation: -42,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 50,
+                rotation: -1,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 64,
+                yPercent: 61,
+                rotation: 42,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 55,
+                yPercent: 67,
+                rotation: 73,
+                fontSize: 12,
+              },
+            ],
+          },
+          6: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 52,
+                rotation: 2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 51,
+                yPercent: 33,
+                rotation: -87,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 62,
+                yPercent: 36,
+                rotation: -58,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 68,
+                yPercent: 45,
+                rotation: -24,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 67,
+                yPercent: 55,
+                rotation: 6,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 61,
+                yPercent: 64,
+                rotation: 47,
+                fontSize: 12,
+              },
+              {
+                id: "text7",
+                content: "Noah",
+                xPercent: 50,
+                yPercent: 68,
+                rotation: 89,
+                fontSize: 12,
+              },
+            ],
+          },
+        },
+        soccerWhite: {
+          1: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 41,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 70,
+                yPercent: 50,
+                rotation: -5,
+                fontSize: 12,
+              },
+            ],
+          },
+          2: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 51,
+                rotation: -1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 70,
+                yPercent: 45,
+                rotation: -11,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 69,
+                yPercent: 55,
+                rotation: 9,
+                fontSize: 12,
+              },
+            ],
+          },
+          3: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 52,
+                rotation: 0,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 67,
+                yPercent: 39,
+                rotation: -30,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 70,
+                yPercent: 49,
+                rotation: -7,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 67,
+                yPercent: 61,
+                rotation: 31,
+                fontSize: 12,
+              },
+            ],
+          },
+          4: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 52,
+                rotation: 0,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 61,
+                yPercent: 35,
+                rotation: -53,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 70,
+                yPercent: 44,
+                rotation: -16,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 69,
+                yPercent: 54,
+                rotation: 10,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 62,
+                yPercent: 64,
+                rotation: 43,
+                fontSize: 12,
+              },
+            ],
+          },
+          5: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 43,
+                yPercent: 52,
+                rotation: 1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 57,
+                yPercent: 33,
+                rotation: -75,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 67,
+                yPercent: 39,
+                rotation: -39,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 70,
+                yPercent: 50,
+                rotation: 2,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 65,
+                yPercent: 60,
+                rotation: 43,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 57,
+                yPercent: 66,
+                rotation: 72,
+                fontSize: 12,
+              },
+            ],
+          },
+          6: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercent: 42,
+                yPercent: 52,
+                rotation: 0,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercent: 52,
+                yPercent: 33,
+                rotation: -89,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Kelvin",
+                xPercent: 63.5,
+                yPercent: 35.5,
+                rotation: -56,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Emma",
+                xPercent: 70,
+                yPercent: 45,
+                rotation: -20,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Jake",
+                xPercent: 68,
+                yPercent: 55,
+                rotation: 9,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercent: 63,
+                yPercent: 64,
+                rotation: 50,
+                fontSize: 12,
+              },
+              {
+                id: "text7",
+                content: "Noah",
+                xPercent: 52,
+                yPercent: 67,
+                rotation: 91,
+                fontSize: 12,
+              },
+            ],
+          },
+        },
+        printFile: {
+          1: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercentLeft: 13,
+                xPercentRight: 63,
+                yPercent: 53,
+                rotation: -3,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercentLeft: 39,
+                xPercentRight: 89,
+                yPercent: 51,
+                rotation: 3,
+                fontSize: 12,
+              },
+            ],
+          },
+          2: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercentLeft: 14,
+                xPercentRight: 64,
+                yPercent: 50,
+                rotation: -3,
+                fontSize: 15,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 41,
+                rotation: -4,
+                fontSize: 13,
+              },
+              {
+                id: "text3",
+                content: "Lucas",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 59,
+                rotation: 12,
+                fontSize: 13,
+              },
+            ],
+          },
+          3: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercentLeft: 14,
+                xPercentRight: 64,
+                yPercent: 52,
+                rotation: -2,
+                fontSize: 15,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercentLeft: 35,
+                xPercentRight: 85,
+                yPercent: 30,
+                rotation: -25,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Lucas",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 49,
+                rotation: 3,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Kelvin",
+                xPercentLeft: 36,
+                xPercentRight: 86,
+                yPercent: 69,
+                rotation: 32,
+                fontSize: 12,
+              },
+            ],
+          },
+          4: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercentLeft: 14,
+                xPercentRight: 64,
+                yPercent: 52,
+                rotation: -1,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercentLeft: 31,
+                xPercentRight: 81,
+                yPercent: 21,
+                rotation: -51,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Lucas",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 40,
+                rotation: -5,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Kelvin",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 58,
+                rotation: 14,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Emma",
+                xPercentLeft: 32,
+                xPercentRight: 82,
+                yPercent: 77,
+                rotation: 53,
+                fontSize: 12,
+              },
+            ],
+          },
+          5: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercentLeft: 14,
+                xPercentRight: 64,
+                yPercent: 51,
+                rotation: -2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercentLeft: 27,
+                xPercentRight: 77,
+                yPercent: 17,
+                rotation: -75,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Lucas",
+                xPercentLeft: 36,
+                xPercentRight: 86,
+                yPercent: 29,
+                rotation: -36,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Kelvin",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 50,
+                rotation: 5,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Emma",
+                xPercentLeft: 34,
+                xPercentRight: 84,
+                yPercent: 69,
+                rotation: 49,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercentLeft: 27,
+                xPercentRight: 77,
+                yPercent: 77,
+                rotation: 74,
+                fontSize: 12,
+              },
+            ],
+          },
+          6: {
+            textFields: [
+              {
+                id: "text1",
+                content: "Grandpa",
+                xPercentLeft: 14,
+                xPercentRight: 64,
+                yPercent: 52,
+                rotation: -2,
+                fontSize: 16,
+              },
+              {
+                id: "text2",
+                content: "Sarah",
+                xPercentLeft: 23,
+                xPercentRight: 73,
+                yPercent: 17,
+                rotation: -90,
+                fontSize: 12,
+              },
+              {
+                id: "text3",
+                content: "Lucas",
+                xPercentLeft: 32,
+                xPercentRight: 82,
+                yPercent: 23,
+                rotation: -54,
+                fontSize: 12,
+              },
+              {
+                id: "text4",
+                content: "Kelvin",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 42,
+                rotation: -9,
+                fontSize: 12,
+              },
+              {
+                id: "text5",
+                content: "Emma",
+                xPercentLeft: 38,
+                xPercentRight: 88,
+                yPercent: 59,
+                rotation: 17,
+                fontSize: 12,
+              },
+              {
+                id: "text6",
+                content: "Lily",
+                xPercentLeft: 32,
+                xPercentRight: 82,
+                yPercent: 74,
+                rotation: 48,
+                fontSize: 12,
+              },
+              {
+                id: "text7",
+                content: "Jake",
+                xPercentLeft: 22,
+                xPercentRight: 72,
+                yPercent: 79,
+                rotation: 95,
+                fontSize: 12,
+              },
+            ],
+          },
+        },
+      };
+
+      // Current state
+      let originalFieldValues = {};
+      let currentCategory = "soccer";
+      let currentKids = 1;
+      let currentColor = "Black";
+      let currentTemplates = JSON.parse(
+        JSON.stringify(defaultTemplates["soccerBlack"])
+      );
+      let textOverlays = {};
+      let selectedOverlay = null;
+      let isDragging = false;
+      let dragStartPos = { x: 0, y: 0 };
+
+      const deltaX = 50;
+
+      // DOM elements
+      const baseImage = document.getElementById("baseImage");
+      const skeleton = document.getElementById("imageSkeleton");
+      const imageContainer = document.getElementById("imageContainer");
+      const textControlsContainer = document.getElementById("text-controls");
+      const exportBtn = document.getElementById("exportBtn");
+
+      // Initialize the application
+      function init() {
+        setupEventListeners();
+        updateImageSource();
+      }
+
+      function setupEventListeners() {
+        // Category selection
+        document.querySelectorAll(".category-variant").forEach((variant) => {
+          variant.addEventListener("click", handleCategoryChange);
+        });
+
+        // Kids selection
+        document.querySelectorAll('input[name="kids"]').forEach((radio) => {
+          radio.addEventListener("change", handleKidsChange);
+        });
+
+        // Color variants
+        document.querySelectorAll(".color-variant").forEach((variant) => {
+          variant.addEventListener("click", handleColorChange);
+        });
+
+        // Export
+        exportBtn.addEventListener("click", exportTemplate);
+
+        // Image container mouse events for dragging
+        imageContainer.addEventListener("mousedown", handleMouseDown);
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+      }
+
+      function storeOriginalValues() {
+        const template = currentTemplates[currentKids];
+        originalFieldValues[currentKids] = {};
+
+        template.textFields.forEach((field) => {
+          originalFieldValues[currentKids][field.id] = {
+            xPercent: field.xPercent,
+            yPercent: field.yPercent,
+            rotation: field.rotation,
+            fontSize: field.fontSize,
+            ...(currentCategory === "printFile" && {
+              xPercentLeft: field.xPercentLeft,
+              xPercentRight: field.xPercentRight,
+            }),
+          };
+        });
+      }
+
+      function handleCategoryChange(e) {
+        // Update selected style
+        document.querySelectorAll(".category-variant").forEach((variant) => {
+          variant.classList.remove("selected");
+        });
+        e.target.classList.add("selected");
+        currentCategory = e.target.dataset.category;
+        const colorVariant = document.querySelector(".color-variants");
+
+        if (currentCategory === "printFile") {
+          colorVariant.style.display = "none";
+          currentTemplates = JSON.parse(
+            JSON.stringify(defaultTemplates[currentCategory])
+          );
+        } else {
+          colorVariant.style.display = "flex";
+
+          const templateKey =
+            currentColor === "White"
+              ? `${currentCategory}White`
+              : currentColor === "Black"
+              ? `${currentCategory}Black`
+              : currentCategory;
+          currentTemplates = JSON.parse(
+            JSON.stringify(defaultTemplates[templateKey])
+          );
+        }
+
+        updateImageSource();
+      }
+
+      function handleKidsChange(e) {
+        // Update selected style
+        document
+          .querySelectorAll(".kids-options .option-item")
+          .forEach((item) => {
+            item.classList.remove("selected");
+          });
+        e.target.parentElement.classList.add("selected");
+
+        currentKids = parseInt(e.target.value);
+        updateImageSource();
+      }
+
+      function handleColorChange(e) {
+        // Update selected style
+        document.querySelectorAll(".color-variant").forEach((variant) => {
+          variant.classList.remove("selected");
+        });
+        e.target.classList.add("selected");
+
+        currentColor = e.target.dataset.color;
+        const templateKey =
+          currentColor === "White"
+            ? `${currentCategory}White`
+            : currentColor === "Black"
+            ? `${currentCategory}Black`
+            : currentCategory;
+        currentTemplates = JSON.parse(
+          JSON.stringify(defaultTemplates[templateKey])
+        );
+
+        updateImageSource();
+      }
+
+      function updateImageSource() {
+        clearOverlays();
+
+        baseImage.style.display = "none";
+
+        // Show loader and hide image
+        skeleton.style.display = "block";
+
+        // Construct new image URL
+        let imageUrl;
+        if (currentCategory === "printFile") {
+          imageUrl = `printFile/${currentKids}.png`; // Single PNG for printFile
+        } else {
+          imageUrl = `${currentCategory}/${currentColor} Mug/${currentKids} Kid${
+            currentKids > 1 ? "s" : ""
+          } ${currentColor} Mug.jpeg`;
+        }
+
+        // Set image source
+        baseImage.src = imageUrl;
+
+        // Wait for it to fully load
+        baseImage.onload = function () {
+          // Hide loader and show image
+          skeleton.style.display = "none";
+          baseImage.style.display = "block";
+
+          updateTemplate();
+        };
+      }
+
+      function updateTemplate() {
+        clearOverlays();
+        createTextControls();
+        createTextOverlays();
+        storeOriginalValues();
+      }
+
+      function clearOverlays() {
+        document.querySelectorAll(".text-overlay").forEach((overlay) => {
+          overlay.remove();
+        });
+        textOverlays = {};
+        selectedOverlay = null;
+      }
+
+      function createTextControls() {
+        textControlsContainer.innerHTML = "";
+
+        const template = currentTemplates[currentKids];
+
+        template.textFields.forEach((field, index) => {
+          const controlGroup = document.createElement("div");
+          controlGroup.className = "text-input-group";
+          controlGroup.dataset.fieldId = field.id;
+
+          const xControl =
+            currentCategory === "printFile"
+              ? `
+        <div class="control-row">
+          <span class="control-label">X Left: ${field.xPercentLeft}%</span>
+          <div class="control-buttons">
+            <button class="control-btn" onclick="adjustField('${field.id}', 'xPercentLeft', -0.5)">-</button>
+            <button class="control-btn" onclick="adjustField('${field.id}', 'xPercentLeft', 0.5)">+</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <span class="control-label">X Right: ${field.xPercentRight}%</span>
+          <div class="control-buttons">
+            <button class="control-btn" onclick="adjustField('${field.id}', 'xPercentRight', -0.5)">-</button>
+            <button class="control-btn" onclick="adjustField('${field.id}', 'xPercentRight', 0.5)">+</button>
+          </div>
+        </div>
+      `
+              : `
+        <div class="control-row">
+          <span class="control-label">X: ${field.xPercent}%</span>
+          <div class="control-buttons">
+            <button class="control-btn" onclick="adjustField('${field.id}', 'xPercent', -0.5)">-</button>
+            <button class="control-btn" onclick="adjustField('${field.id}', 'xPercent', 0.5)">+</button>
+          </div>
+        </div>
+      `;
+
+          controlGroup.innerHTML = `
+      <div class="form-group">
+        <label>${field.id === "text1" ? "Dad/Mom" : `Child ${index}`}</label>
+        <input type="text" value="${
+          field.content || ""
+        }" onchange="updateFieldContent('${field.id}', this.value)">
+      </div>
+      <div class="control-group">
+        ${xControl}
+        <div class="control-row">
+          <span class="control-label">Y: ${field.yPercent}%</span>
+          <div class="control-buttons">
+            <button class="control-btn" onclick="adjustField('${
+              field.id
+            }', 'yPercent', -0.5)">-</button>
+            <button class="control-btn" onclick="adjustField('${
+              field.id
+            }', 'yPercent', 0.5)">+</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Rotation: ${field.rotation}°</span>
+          <div class="control-buttons">
+            <button class="control-btn" onclick="adjustField('${
+              field.id
+            }', 'rotation', -1)">-</button>
+            <button class="control-btn" onclick="adjustField('${
+              field.id
+            }', 'rotation', 1)">+</button>
+          </div>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Size: ${field.fontSize}px</span>
+          <div class="control-buttons">
+            <button class="control-btn" onclick="adjustField('${
+              field.id
+            }', 'fontSize', -1)">-</button>
+            <button class="control-btn" onclick="adjustField('${
+              field.id
+            }', 'fontSize', 1)">+</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+          textControlsContainer.appendChild(controlGroup);
+        });
+      }
+
+      function createTextOverlays() {
+        const template = currentTemplates[currentKids];
+        const imageWrapper = document.querySelector(".image-wrapper");
+
+        template.textFields.forEach((field) => {
+          if (currentCategory === "printFile") {
+            // Create two overlays for printFile: one for xPercentLeft, one for xPercentRight
+            const leftOverlay = createOverlay(field, true);
+            const rightOverlay = createOverlay(field, false);
+            imageWrapper.appendChild(leftOverlay);
+            imageWrapper.appendChild(rightOverlay);
+            textOverlays[`${field.id}-left`] = leftOverlay;
+            textOverlays[`${field.id}-right`] = rightOverlay;
+          } else {
+            // Single overlay for other categories
+            const overlay = createOverlay(field);
+            imageWrapper.appendChild(overlay);
+            textOverlays[field.id] = overlay;
+          }
+        });
+      }
+
+      function createOverlay(field, isLeft) {
+        const overlay = document.createElement("div");
+        overlay.className = "text-overlay";
+        overlay.dataset.fieldId = `overlay-${field.id}${
+          currentCategory === "printFile" ? (isLeft ? "-left" : "-right") : ""
+        }`;
+        overlay.textContent = field.content || "";
+
+        overlay.style.left =
+          currentCategory === "printFile"
+            ? isLeft
+              ? `${field.xPercentLeft}%`
+              : `${field.xPercentRight}%`
+            : `${field.xPercent}%`;
+        overlay.style.top = `${field.yPercent}%`;
+        overlay.style.transform =
+          field.id === "text1"
+            ? `translate(-50%, -50%) rotate(${field.rotation}deg)`
+            : `translate(0%, -50%) rotate(${field.rotation}deg)`;
+        overlay.style.fontSize = `${field.fontSize}px`;
+
+        overlay.addEventListener("click", () => selectOverlay(overlay));
+
+        return overlay;
+      }
+
+      function selectOverlay(overlay) {
+        // Remove previous selection
+        document.querySelectorAll(".text-overlay").forEach((o) => {
+          o.classList.remove("selected");
+        });
+        document.querySelectorAll(".text-input-group").forEach((g) => {
+          g.classList.remove("active");
+        });
+
+        // Select new overlay only if overlay is not null
+        if (overlay) {
+          const fieldId = overlay.dataset.fieldId.split("-")[1]; // Get base fieldId (e.g., text1)
+          if (currentCategory === "printFile") {
+            // Select both left and right overlays for the same field
+            const leftOverlay = textOverlays[`${fieldId}-left`];
+            const rightOverlay = textOverlays[`${fieldId}-right`];
+            if (leftOverlay) leftOverlay.classList.add("selected");
+            if (rightOverlay) rightOverlay.classList.add("selected");
+          } else {
+            overlay.classList.add("selected");
+          }
+          selectedOverlay = overlay;
+
+          // Highlight corresponding control group
+          const controlGroup = document.querySelector(
+            `[data-field-id="overlay-${fieldId}"]`
+          );
+          if (controlGroup) {
+            controlGroup.classList.add("active");
+          }
+        } else {
+          selectedOverlay = null;
+        }
+      }
+
+      function updateFieldContent(fieldId, newContent) {
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+        if (field) {
+          field.content = newContent;
+
+          if (currentCategory === "printFile") {
+            const leftOverlay = textOverlays[`${fieldId}-left`];
+            const rightOverlay = textOverlays[`${fieldId}-right`];
+            if (leftOverlay) leftOverlay.textContent = newContent;
+            if (rightOverlay) rightOverlay.textContent = newContent;
+          } else {
+            const overlay = textOverlays[fieldId];
+            if (overlay) overlay.textContent = newContent;
+          }
+        }
+      }
+
+      function adjustField(fieldId, property, delta) {
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+
+        if (!field) return;
+
+        // Get original values
+        const originalValues = originalFieldValues[currentKids]?.[fieldId];
+        if (!originalValues) return;
+
+        // Apply adjustment
+        let newValue = field[property] + delta;
+
+        // Set bounds based on property with limits from original values
+        switch (property) {
+          case "xPercent":
+            const originalPos = originalValues.xPercent;
+            const minPos = Math.max(0, originalPos - 15);
+            const maxPos = Math.min(100, originalPos + 15);
+            newValue = Math.max(minPos, Math.min(maxPos, newValue));
+            break;
+          case "xPercentLeft":
+          case "xPercentRight":
+            const originalX = originalValues[property];
+            const minX = Math.max(0, originalX - 15);
+            const maxX = Math.min(100, originalX + 15);
+            newValue = Math.max(minX, Math.min(maxX, newValue));
+            break;
+          case "yPercent":
+            const originalY = originalValues.yPercent;
+            const minY = Math.max(0, originalY - 15);
+            const maxY = Math.min(100, originalY + 15);
+            newValue = Math.max(minY, Math.min(maxY, newValue));
+            break;
+          case "rotation":
+            const originalRot = originalValues.rotation;
+            const minRot = originalRot - 50;
+            const maxRot = originalRot + 50;
+            newValue = Math.max(minRot, Math.min(maxRot, newValue));
+            break;
+          case "fontSize":
+            const originalSize = originalValues.fontSize;
+            const minSize = Math.max(8, originalSize - 5);
+            const maxSize = Math.min(72, originalSize + 5);
+            newValue = Math.max(minSize, Math.min(maxSize, newValue));
+            break;
+        }
+
+        field[property] = newValue;
+
+        // Update overlay
+        updateOverlayStyle(fieldId);
+
+        // Update control labels
+        updateControlLabels(fieldId);
+      }
+
+      function updateOverlayStyle(fieldId) {
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+
+        if (!field) return;
+
+        if (currentCategory === "printFile") {
+          const leftOverlay = textOverlays[`${fieldId}-left`];
+          const rightOverlay = textOverlays[`${fieldId}-right`];
+          if (leftOverlay) {
+            leftOverlay.style.left = `${field.xPercentLeft}%`;
+            leftOverlay.style.top = `${field.yPercent}%`;
+            leftOverlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+            leftOverlay.style.fontSize = `${field.fontSize}px`;
+          }
+          if (rightOverlay) {
+            rightOverlay.style.left = `${field.xPercentRight}%`;
+            rightOverlay.style.top = `${field.yPercent}%`;
+            rightOverlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+            rightOverlay.style.fontSize = `${field.fontSize}px`;
+          }
+        } else {
+          const overlay = textOverlays[fieldId];
+          if (overlay) {
+            overlay.style.left = `${field.xPercent}%`;
+            overlay.style.top = `${field.yPercent}%`;
+            overlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+            overlay.style.fontSize = `${field.fontSize}px`;
+          }
+        }
+      }
+
+      function updateControlLabels(fieldId) {
+        const template = currentTemplates[currentKids];
+        template.textFields.forEach((field) => {
+          if (field.id !== fieldId) return;
+
+          const controlGroup = document.querySelector(
+            `.text-input-group[data-field-id="${field.id}"]`
+          );
+
+          if (!controlGroup) return;
+
+          const labels = controlGroup.querySelectorAll(".control-label");
+
+          if (labels.length >= 4) {
+            if (currentCategory === "printFile") {
+              labels[0].textContent = `X Left: ${field.xPercentLeft}%`;
+              labels[1].textContent = `X Right: ${field.xPercentRight}%`;
+              labels[2].textContent = `Y: ${field.yPercent}%`;
+              labels[3].textContent = `Rotation: ${field.rotation}°`;
+              labels[4].textContent = `Size: ${field.fontSize}px`;
+            } else {
+              labels[0].textContent = `X: ${field.xPercent}%`;
+              labels[1].textContent = `Y: ${field.yPercent}%`;
+              labels[2].textContent = `Rotation: ${field.rotation}°`;
+              labels[3].textContent = `Size: ${field.fontSize}px`;
+            }
+          }
+        });
+      }
+
+      // Mouse event handlers for dragging
+      function handleMouseDown(e) {
+        const overlay = e.target.closest(".text-overlay");
+        if (!overlay) return;
+
+        e.preventDefault();
+        isDragging = true;
+        selectedOverlay = overlay;
+
+        overlay.classList.add("dragging");
+        selectOverlay(overlay);
+
+        if (currentCategory === "printFile") {
+        }
+
+        const rect = imageContainer.getBoundingClientRect();
+        dragStartPos = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        };
+      }
+
+      function handleMouseMove(e) {
+        if (!isDragging || !selectedOverlay) return;
+
+        e.preventDefault();
+
+        const rect = imageContainer.getBoundingClientRect();
+        const imageRect = baseImage.getBoundingClientRect();
+
+        // Calculate position relative to the image
+        const x = e.clientX - imageRect.left;
+        const y = e.clientY - imageRect.top;
+
+        let xPercent = Math.max(0, Math.min(100, (x / imageRect.width) * 100));
+        let yPercent = Math.max(0, Math.min(100, (y / imageRect.height) * 100));
+
+        // Get field ID and original values
+        const fieldId = selectedOverlay.dataset.fieldId.split("-")[1];
+        const originalValues = originalFieldValues[currentKids]?.[fieldId];
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+
+        if (originalValues) {
+          if (currentCategory === "printFile") {
+            // Apply position bounds (+/-15% from original for xPercentLeft and xPercentRight)
+            const minXLeft = Math.max(0, originalValues.xPercentLeft - 15);
+            const maxXLeft = Math.min(100, originalValues.xPercentLeft + 15);
+            const minXRight = Math.max(0, originalValues.xPercentRight - 15);
+            const maxXRight = Math.min(100, originalValues.xPercentRight + 15);
+            const minY = Math.max(0, originalValues.yPercent - 15);
+            const maxY = Math.min(100, originalValues.yPercent + 15);
+
+            if (selectedOverlay.dataset.fieldId.includes("-left")) {
+              xPercent = Math.max(minXLeft, Math.min(maxXLeft, xPercent));
+            } else {
+              xPercent = Math.max(minXRight, Math.min(maxXRight, xPercent));
+            }
+            yPercent = Math.max(minY, Math.min(maxY, yPercent));
+          } else {
+            // Apply position bounds (+/-15% from original)
+            const minX = Math.max(0, originalValues.xPercent - 15);
+            const maxX = Math.min(100, originalValues.xPercent + 15);
+            const minY = Math.max(0, originalValues.yPercent - 15);
+            const maxY = Math.min(100, originalValues.yPercent + 15);
+
+            xPercent = Math.max(minX, Math.min(maxX, xPercent));
+            yPercent = Math.max(minY, Math.min(maxY, yPercent));
+          }
+        }
+
+        // Update overlay position
+        if (currentCategory === "printFile") {
+          const isLeftOverlay =
+            selectedOverlay.dataset.fieldId.includes("-left");
+          const leftOverlay = textOverlays[`${fieldId}-left`];
+          const rightOverlay = textOverlays[`${fieldId}-right`];
+
+          if (leftOverlay) {
+            leftOverlay.style.left = isLeftOverlay
+              ? `${xPercent}%`
+              : `${field.xPercentLeft}%`;
+            leftOverlay.style.top = `${yPercent}%`;
+          }
+          if (rightOverlay) {
+            rightOverlay.style.left = isLeftOverlay
+              ? `${xPercent + deltaX}%`
+              : `${xPercent}%`;
+            rightOverlay.style.top = `${yPercent}%`;
+          }
+        } else {
+          selectedOverlay.style.left = `${xPercent}%`;
+          selectedOverlay.style.top = `${yPercent}%`;
+        }
+
+        // Update template data
+        if (field) {
+          if (currentCategory === "printFile") {
+            if (selectedOverlay.dataset.fieldId.includes("-left")) {
+              field.xPercentLeft = Math.round(xPercent);
+              field.xPercentRight = Math.round(xPercent + deltaX);
+            } else {
+              field.xPercentRight = Math.round(xPercent);
+              field.xPercentLeft = Math.round(xPercent - deltaX);
+            }
+            field.yPercent = Math.round(yPercent);
+          } else {
+            field.xPercent = Math.round(xPercent);
+            field.yPercent = Math.round(yPercent);
+          }
+        }
+      }
+
+      function handleMouseUp(e) {
+        if (isDragging && selectedOverlay) {
+          selectedOverlay.classList.remove("dragging");
+          const fieldId = selectedOverlay.dataset.fieldId.split("-")[1];
+          updateControlLabels(fieldId);
+        }
+
+        isDragging = false;
+        selectedOverlay = null;
+        selectOverlay(null);
+      }
+
+      function exportTemplate() {
+        const exportData = {
+          category: currentCategory,
+          templates: currentTemplates,
+          color: currentCategory !== "printFile" ? currentColor : null,
+          imageSize: {
+            width: baseImage.naturalWidth,
+            height: baseImage.naturalHeight,
+          },
+          metadata: {
+            exportDate: new Date().toISOString(),
+            version: "1.0",
+            publisher: "10daer",
+          },
+        };
+
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(dataBlob);
+        link.download =
+          currentCategory !== "printFile"
+            ? `${currentCategory}-${currentColor}-template-config-${Date.now()}.json`
+            : `${currentCategory}-template-config-${Date.now()}.json`;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+      }
+
+      // Make functions globally available
+      window.updateFieldContent = updateFieldContent;
+      window.adjustField = adjustField;
+
+      // Initialize the application when DOM is loaded
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    </script>
+  </body>
+</html>

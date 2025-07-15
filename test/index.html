@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backend Image Generator Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 30px;
+      }
+      .test-section {
+        margin-bottom: 40px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .kids-inputs {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin-top: 20px;
+      }
+      .status {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 4px;
+      }
+      .success {
+        background-color: #dff0d8;
+        color: #3c763d;
+      }
+      .error {
+        background-color: #f2dede;
+        color: #a94442;
+      }
+      .image-preview {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .image-preview img {
+        max-width: 100%;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .loading {
+        display: none;
+        text-align: center;
+        margin: 20px 0;
+      }
+      .loading-spinner {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 10px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Backend Image Generator Test Tool</h1>
+
+    <div class="test-section">
+      <h2>1. Test API Connection</h2>
+      <div class="form-group">
+        <label for="apiEndpoint">API Endpoint:</label>
+        <input
+          type="text"
+          id="apiEndpoint"
+          value="http://localhost:5000/api/generate-images"
+        />
+      </div>
+      <button id="testConnection">Test Connection</button>
+      <div id="connectionStatus" class="status"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>2. Generate Personalized Image</h2>
+
+      <div class="form-group">
+        <label for="colorSelect">Select Color:</label>
+        <select id="colorSelect">
+          <option value="Ceramic Yellow">Ceramic Yellow</option>
+          <option value="Ceramic Black">Ceramic Black</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="numberOfKids">Number of Kids:</label>
+        <select id="numberOfKids">
+          <option value="1">1 Kid</option>
+          <option value="2">2 Kids</option>
+          <option value="3">3 Kids</option>
+          <option value="4">4 Kids</option>
+          <option value="5">5 Kids</option>
+          <option value="6">6 Kids</option>
+        </select>
+      </div>
+
+      <div id="kidsInputs" class="kids-inputs">
+        <div class="form-group">
+          <label for="text1">Main Text:</label>
+          <input type="text" id="text1" value="Our Family" />
+        </div>
+        <!-- Additional text fields will be added dynamically -->
+      </div>
+
+      <button id="generateImage">Generate Image</button>
+
+      <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <span>Generating image...</span>
+      </div>
+
+      <div id="generationStatus" class="status"></div>
+
+      <div id="imagePreview" class="image-preview"></div>
+
+      <h3>Response Details:</h3>
+      <pre id="generationResult"></pre>
+    </div>
+
+    <div class="test-section">
+      <h2>3. View Generated Images</h2>
+      <button onclick="viewGeneratedImages()">Open Folder in New Tab</button>
+      <button onclick="listGeneratedImages()">List Images Below</button>
+      <div id="imageList" class="image-preview"></div>
+    </div>
+
+    <script>
+      // Elements
+      const apiEndpointInput = document.getElementById("apiEndpoint");
+      const colorSelect = document.getElementById("colorSelect");
+      const numberOfKidsSelect = document.getElementById("numberOfKids");
+      const kidsInputs = document.getElementById("kidsInputs");
+      const connectionStatus = document.getElementById("connectionStatus");
+      const generationStatus = document.getElementById("generationStatus");
+      const generationResult = document.getElementById("generationResult");
+      const imagePreview = document.getElementById("imagePreview");
+      const loadingElement = document.getElementById("loading");
+
+      // Test Connection Button
+      document
+        .getElementById("testConnection")
+        .addEventListener("click", async () => {
+          const apiUrl = apiEndpointInput.value;
+          showStatus(connectionStatus, "Testing connection...", "neutral");
+
+          try {
+            // We'll use a GET request to the server to test connection
+            // This assumes there's a health endpoint or the server responds to GET
+            // You might need to modify this based on your server implementation
+            const response = await fetch(
+              apiUrl.replace("/generate-images", "/"),
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.ok) {
+              showStatus(
+                connectionStatus,
+                "Connection successful! Server is reachable.",
+                "success"
+              );
+            } else {
+              showStatus(
+                connectionStatus,
+                `Connection failed with status: ${response.status}`,
+                "error"
+              );
+            }
+          } catch (error) {
+            showStatus(
+              connectionStatus,
+              `Connection failed: ${error.message}`,
+              "error"
+            );
+            console.error(error);
+          }
+        });
+
+      // Generate Image Button
+      document
+        .getElementById("generateImage")
+        .addEventListener("click", async () => {
+          const apiUrl = apiEndpointInput.value;
+          const color = colorSelect.value;
+          const numberOfKids = parseInt(numberOfKidsSelect.value, 10);
+
+          // Collect personalization data
+          const personalizationData = {};
+          for (let i = 1; i <= numberOfKids + 1; i++) {
+            const textInput = document.getElementById(`text${i}`);
+            if (textInput) {
+              personalizationData[`text${i}`] = textInput.value;
+            }
+          }
+
+          const kidPersonalizationData = {
+            kids: Object.entries(personalizationData).map(([textId, name]) => ({
+              textId,
+              name,
+            })),
+          };
+
+          const imageSrc =
+            "https://www.farsdag.shop/cdn/shop/files/226af490-91d7-4d33-90b2-85a3bad5ba01.webp?v=1747136514&amp;width=1946";
+
+          // Show loading indicator
+          loadingElement.style.display = "block";
+          showStatus(generationStatus, "Generating image...", "neutral");
+          const designConfig = {
+            number_of_kids: numberOfKids,
+            personalization_data: kidPersonalizationData,
+            color,
+            imageSrc,
+          };
+
+          console.log(designConfig);
+
+          try {
+            const response = await fetch(apiUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(designConfig),
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              showStatus(
+                generationStatus,
+                "Image generated successfully!",
+                "success"
+              );
+
+              // Display the results
+              generationResult.textContent = JSON.stringify(data, null, 2);
+
+              // Show preview image
+              if (data.previewImage || data.previewImageUrl) {
+                const imgUrl = data.previewImage || data.previewImageUrl;
+                imagePreview.innerHTML = `
+                <h3>Preview Image:</h3>
+                <img src="${imgUrl}" alt="Generated Preview" />
+                <p><strong>Print image also available at:</strong> ${
+                  data.printImage || data.printImageUrl
+                }</p>
+              `;
+              }
+            } else {
+              showStatus(
+                generationStatus,
+                `Image generation failed with status: ${response.status}`,
+                "error"
+              );
+              generationResult.textContent = await response.text();
+            }
+          } catch (error) {
+            showStatus(
+              generationStatus,
+              `Image generation failed: ${error.message}`,
+              "error"
+            );
+            generationResult.textContent = error.toString();
+            console.error(error);
+          } finally {
+            // Hide loading indicator
+            loadingElement.style.display = "none";
+          }
+        });
+
+      // Update text inputs when number of kids changes
+      numberOfKidsSelect.addEventListener("change", updateTextInputs);
+
+      // Initialize text inputs
+      updateTextInputs();
+
+      function viewGeneratedImages() {
+        const baseUrl = apiEndpointInput.value.replace(
+          "/generate-images",
+          "/generated_images"
+        );
+        window.open(baseUrl, "_blank");
+      }
+
+      async function listGeneratedImages() {
+        const baseUrl = apiEndpointInput.value.replace(
+          "/generate-images",
+          "/generated_images"
+        );
+
+        try {
+          const response = await fetch(baseUrl);
+          if (!response.ok) throw new Error("Failed to load image list");
+
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, "text/html");
+
+          const links = Array.from(doc.querySelectorAll("a"))
+            .filter((link) => /\.(jpg|jpeg|png|webp|gif)$/i.test(link.href))
+            .map((link) => link.href);
+
+          const container = document.getElementById("imageList");
+          container.innerHTML = links
+            .map(
+              (href) => `
+      <div>
+        <img src="${href}" alt="Generated" style="max-width:200px;margin:10px;" />
+      </div>
+    `
+            )
+            .join("");
+        } catch (err) {
+          document.getElementById(
+            "imageList"
+          ).innerHTML = `<p style="color:red;">Error loading images: ${err.message}</p>`;
+          console.error(err);
+        }
+      }
+
+      function updateTextInputs() {
+        const numberOfKids = parseInt(numberOfKidsSelect.value, 10);
+
+        // Keep the first input (text1) which is always present
+        const firstInput = kidsInputs.querySelector(".form-group");
+
+        // Clear existing inputs except the first one
+        kidsInputs.innerHTML = "";
+        kidsInputs.appendChild(firstInput);
+
+        // Add input fields for each kid
+        for (let i = 2; i <= numberOfKids + 1; i++) {
+          const formGroup = document.createElement("div");
+          formGroup.className = "form-group";
+
+          const label = document.createElement("label");
+          label.setAttribute("for", `text${i}`);
+          label.textContent = `Kid ${i - 1} Name:`;
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.id = `text${i}`;
+          input.value = `Kid ${i - 1}`;
+
+          formGroup.appendChild(label);
+          formGroup.appendChild(input);
+          kidsInputs.appendChild(formGroup);
+        }
+      }
+
+      function showStatus(element, message, type) {
+        element.textContent = message;
+        element.className =
+          type === "success"
+            ? "status success"
+            : type === "error"
+            ? "status error"
+            : "status";
+      }
+    </script>
+  </body>
+</html>

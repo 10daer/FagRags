@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mug Template Editor</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Mug Template Editor</h1>
+        <p class="subtitle">
+          Drag and adjust text overlays to create custom mug templates
+        </p>
+      </header>
+
+      <div class="editor-container">
+        <div class="preview-section">
+          <div class="image-container" id="imageContainer">
+            <div class="image-wrapper">
+              <!-- Loader -->
+              <div id="imageSkeleton" class="skeleton-loader"></div>
+
+              <img
+                src=""
+                alt="Customizable mug"
+                class="base-image"
+                id="baseImage"
+              />
+              <!-- Text overlays will be added dynamically -->
+            </div>
+          </div>
+
+          <div class="controls-section">
+            <div class="section-title">Template Configuration</div>
+
+            <!-- Category Selection -->
+            <div class="form-group">
+              <label>Category</label>
+              <div class="category-variants">
+                <div class="category-variant selected" data-category="soccer">
+                  Soccer
+                </div>
+                <div class="category-variant" data-category="tools">Tools</div>
+                <div class="category-variant" data-category="printFile">
+                  Print File
+                </div>
+              </div>
+            </div>
+
+            <!-- Color Variants -->
+            <div class="form-group">
+              <label>Color Variant</label>
+              <div class="color-variants">
+                <div
+                  class="color-variant selected"
+                  data-color="Black"
+                  style="background-color: #2c2c2c"
+                  title="Black Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Blue"
+                  style="background-color: #4a90e2"
+                  title="Blue Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Green"
+                  style="background-color: #7ed321"
+                  title="Green Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Pink"
+                  style="background-color: #ff69b4"
+                  title="Pink Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Red"
+                  style="background-color: #d0021b"
+                  title="Red Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="Yellow"
+                  style="background-color: #f5a623"
+                  title="Yellow Mug"
+                ></div>
+                <div
+                  class="color-variant"
+                  data-color="White"
+                  style="background-color: #ffffff; border-color: #ccc"
+                  title="White Mug"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Number of Kids -->
+            <div class="form-group">
+              <label>Number of Kids</label>
+              <div class="option-group kids-options">
+                <label class="option-item selected" for="kids-1">
+                  <input
+                    type="radio"
+                    id="kids-1"
+                    name="kids"
+                    value="1"
+                    checked
+                  />
+                  <span class="option-text">1 Kid</span>
+                </label>
+                <label class="option-item" for="kids-2">
+                  <input type="radio" id="kids-2" name="kids" value="2" />
+                  <span class="option-text">2 Kids</span>
+                </label>
+                <label class="option-item" for="kids-3">
+                  <input type="radio" id="kids-3" name="kids" value="3" />
+                  <span class="option-text">3 Kids</span>
+                </label>
+                <label class="option-item" for="kids-4">
+                  <input type="radio" id="kids-4" name="kids" value="4" />
+                  <span class="option-text">4 Kids</span>
+                </label>
+                <label class="option-item" for="kids-5">
+                  <input type="radio" id="kids-5" name="kids" value="5" />
+                  <span class="option-text">5 Kids</span>
+                </label>
+                <label class="option-item" for="kids-6">
+                  <input type="radio" id="kids-6" name="kids" value="6" />
+                  <span class="option-text">6 Kids</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="section-title hide">Text Overlays</div>
+            <div id="text-controls" class="hide">
+              <!-- Text input controls will be added dynamically -->
+            </div>
+
+            <!-- Export Controls -->
+            <div class="section-title hide">Template Actions</div>
+            <button class="hide btn" id="exportBtn">
+              Export Template JSON
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

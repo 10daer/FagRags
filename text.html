@@ -1,0 +1,148 @@
+<button
+  id="ge-personalize"
+  name="personalize"
+  type="button"
+  class="product-form__submit button button--full-width button--secondary ge-personalize-btn"
+  style="--border-offset: 0; border-style: solid; border-width: 1px; opacity: 1"
+>
+  <span>Personalisera designen</span>
+</button>
+
+<style>
+  element.style {
+    --border-offset: 0;
+    border-style: solid;
+    border-width: 1px;
+    opacity: 1;
+  }
+  .product-form__submit {
+    margin-bottom: 1rem;
+  }
+  .button--full-width {
+    display: flex;
+    width: 100%;
+  }
+  .button,
+  .button-label,
+  .shopify-challenge__button,
+  .customer button {
+    font-size: 1.5rem;
+    letter-spacing: 0.1rem;
+    line-height: calc(1 + 0.2 / var(--font-body-scale));
+  }
+  .button,
+  .shopify-challenge__button,
+  .customer button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    padding: 0 3rem;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: rgb(var(--color-button-text));
+    transition: box-shadow var(--duration-short) ease;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: rgba(var(--color-button), var(--alpha-button-background));
+  }
+  .button,
+  .shopify-challenge__button,
+  .customer button,
+  button.shopify-payment-button__button--unbranded {
+    min-width: calc(12rem + var(--buttons-border-width) * 2);
+    min-height: calc(4.5rem + var(--buttons-border-width) * 2);
+  }
+  .button,
+  .shopify-challenge__button,
+  .customer button,
+  button.shopify-payment-button__button--unbranded {
+    --shadow-horizontal-offset: var(--buttons-shadow-horizontal-offset);
+    --shadow-vertical-offset: var(--buttons-shadow-vertical-offset);
+    --shadow-blur-radius: var(--buttons-shadow-blur-radius);
+    --shadow-opacity: var(--buttons-shadow-opacity);
+    --shadow-visible: var(--buttons-shadow-visible);
+    --border-offset: var(--buttons-border-offset);
+    --border-opacity: calc(1 - var(--buttons-border-opacity));
+    border-radius: var(--buttons-radius-outset);
+    position: relative;
+  }
+  .button--secondary,
+  .button--tertiary {
+    --color-button: var(--color-secondary-button);
+    --color-button-text: var(--color-secondary-button-text);
+  }
+</style>
+
+<div
+  class="customizer product__column-sticky product-media-container media-type-image media-fit-contain global-media-settings gradient constrain-height"
+  style="--ratio: 1; --preview-ratio: 1"
+  is="product-customizer"
+>
+  <div class="image-container media" id="imageContainer">
+    <div class="image-wrapper">
+      {% if product.selected_or_first_available_variant.featured_media != null
+      %} {% assign featured_media =
+      product.selected_or_first_available_variant.featured_media %}
+      <img
+        src="{{ featured_media.preview_image | image_url: width: 1946 }}"
+        alt="{{ featured_media.alt | escape | default: product.title }}"
+        class="base-image image-magnify-lightbox"
+        id="baseImage"
+        width="1946"
+        height="1946"
+        sizes="(min-width: 1200px) 715px, (min-width: 990px) calc(65.0vw - 10rem), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw / 1 - 4rem)"
+        srcset="{{ featured_media.preview_image | image_url: width: 246 }} 246w,
+                  {{ featured_media.preview_image | image_url: width: 493 }} 493w,
+                  {{ featured_media.preview_image | image_url: width: 600 }} 600w,
+                  {{ featured_media.preview_image | image_url: width: 713 }} 713w,
+                  {{ featured_media.preview_image | image_url: width: 823 }} 823w,
+                  {{ featured_media.preview_image | image_url: width: 990 }} 990w,
+                  {{ featured_media.preview_image | image_url: width: 1100 }} 1100w,
+                  {{ featured_media.preview_image | image_url: width: 1206 }} 1206w,
+                  {{ featured_media.preview_image | image_url: width: 1346 }} 1346w,
+                  {{ featured_media.preview_image | image_url: width: 1426 }} 1426w,
+                  {{ featured_media.preview_image | image_url: width: 1646 }} 1646w,
+                  {{ featured_media.preview_image | image_url: width: 1946 }} 1946w"
+      />
+      {% elsif product.featured_image != null %}
+      <img
+        src="{{ product.featured_image | image_url: width: 1946 }}"
+        alt="{{ product.title | escape }}"
+        class="base-image image-magnify-lightbox"
+        id="baseImage"
+        width="1946"
+        height="1946"
+        sizes="(min-width: 1200px) 715px, (min-width: 990px) calc(65.0vw - 10rem), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw / 1 - 4rem)"
+        srcset="{{ product.featured_image | image_url: width: 246 }} 246w,
+                  {{ product.featured_image | image_url: width: 493 }} 493w,
+                  {{ product.featured_image | image_url: width: 600 }} 600w,
+                  {{ product.featured_image | image_url: width: 713 }} 713w,
+                  {{ product.featured_image | image_url: width: 823 }} 823w,
+                  {{ product.featured_image | image_url: width: 990 }} 990w,
+                  {{ product.featured_image | image_url: width: 1100 }} 1100w,
+                  {{ product.featured_image | image_url: width: 1206 }} 1206w,
+                  {{ product.featured_image | image_url: width: 1346 }} 1346w,
+                  {{ product.featured_image | image_url: width: 1426 }} 1426w,
+                  {{ product.featured_image | image_url: width: 1646 }} 1646w,
+                  {{ product.featured_image | image_url: width: 1946 }} 1946w"
+      />
+      {% else %}
+      <img
+        src="{{ 'product-placeholder.png' | asset_url }}"
+        alt="{{ 'products.product.media.product_placeholder' | t }}"
+        class="base-image image-magnify-lightbox"
+        id="baseImage"
+        width="1946"
+        height="1946"
+      />
+      {% endif %}
+      <!-- Text overlays will be added dynamically -->
+    </div>
+  </div>
+  <div class="canvas-container">
+    <canvas id="canvas"></canvas>
+  </div>
+</div>

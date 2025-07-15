@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual Template Editor</title>
+    <style>
+      /* Shopify-inspired styling system */
+      :root {
+        /* Colors */
+        --color-primary: #008060;
+        --color-primary-hover: #006e52;
+        --color-primary-focus: rgba(0, 128, 96, 0.15);
+        --color-secondary: #5c6ac4;
+        --color-secondary-hover: #5c6ac4;
+        --color-background: #f6f6f7;
+        --color-surface: #ffffff;
+        --color-text: #212b36;
+        --color-text-subdued: #637381;
+        --color-border: #dfe3e8;
+        --color-backdrop: rgba(33, 43, 54, 0.5);
+        --color-danger: #d72c0d;
+        --color-warning: #ffc453;
+
+        /* Shadows */
+        --shadow-base: 0px 0px 0px 1px rgba(63, 63, 68, 0.05),
+          0px 1px 3px 0px rgba(63, 63, 68, 0.15);
+        --shadow-deep: 0px 2px 16px rgba(33, 43, 54, 0.08);
+        --shadow-button: 0px 2px 5px rgba(0, 0, 0, 0.08);
+
+        /* Spacing */
+        --spacing-none: 0;
+        --spacing-extra-tight: 0.25rem;
+        --spacing-tight: 0.5rem;
+        --spacing-base: 1rem;
+        --spacing-loose: 1.5rem;
+        --spacing-extra-loose: 2rem;
+
+        /* Typography */
+        --font-size-heading: 1.5rem;
+        --font-size-subheading: 1.125rem;
+        --font-size-base: 1rem;
+        --font-size-small: 0.875rem;
+
+        /* Radius */
+        --radius-small: 4px;
+        --radius-base: 8px;
+        --radius-large: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "San Francisco",
+          "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      }
+
+      @font-face {
+        font-family: "Dainty";
+        src: url("data:font/truetype;charset=utf-8;base64,") format("truetype");
+      }
+
+      body {
+        padding: 0;
+        background-color: var(--color-background);
+        color: var(--color-text);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--spacing-extra-loose);
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: var(--spacing-extra-loose);
+      }
+
+      h1 {
+        font-weight: 600;
+        color: var(--color-text);
+        margin-bottom: var(--spacing-tight);
+        font-size: var(--font-size-heading);
+      }
+
+      .subtitle {
+        color: var(--color-text-subdued);
+        font-weight: 400;
+        font-size: var(--font-size-base);
+      }
+
+      .editor-container {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: var(--spacing-extra-loose);
+        height: calc(100vh - 200px);
+        min-height: 600px;
+      }
+
+      .preview-section {
+        background-color: var(--color-surface);
+        border-radius: var(--radius-large);
+        box-shadow: var(--shadow-base);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .controls-section {
+        background-color: var(--color-surface);
+        border-radius: var(--radius-large);
+        box-shadow: var(--shadow-base);
+        overflow-y: auto;
+        padding: var(--spacing-extra-loose);
+      }
+
+      .image-container {
+        position: relative;
+        width: 100%;
+        background-color: var(--color-background);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: var(--spacing-extra-loose);
+        overflow: hidden;
+        flex: 1;
+      }
+
+      .image-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        height: auto;
+      }
+
+      .base-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        user-select: none;
+      }
+
+      .text-overlay {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+        color: #000000;
+        font-size: 10px;
+        font-family: "Dainty", serif;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        cursor: move;
+        z-index: 10;
+        border: 2px solid transparent;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+
+      .text-overlay:hover {
+        border-color: var(--color-primary);
+        background-color: rgba(0, 128, 96, 0.1);
+      }
+
+      .text-overlay.selected {
+        border-color: var(--color-primary);
+        background-color: rgba(0, 128, 96, 0.2);
+        box-shadow: 0 0 0 1px var(--color-primary);
+      }
+
+      .text-overlay.dragging {
+        z-index: 1000;
+        cursor: grabbing;
+      }
+
+      .option-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-tight);
+        margin-bottom: var(--spacing-base);
+      }
+
+      .option-item {
+        flex: 0 0 auto;
+        position: relative;
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        padding: var(--spacing-tight) var(--spacing-base);
+        cursor: pointer;
+        font-size: var(--font-size-small);
+        transition: all 0.2s ease;
+        background-color: var(--color-surface);
+        text-align: center;
+        user-select: none;
+      }
+
+      .option-item input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .option-item:hover {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+      }
+
+      .option-item.selected {
+        background-color: #1a1a1a;
+        border-color: #1a1a1a;
+        color: white;
+      }
+
+      .form-group {
+        margin-bottom: var(--spacing-loose);
+      }
+
+      label {
+        display: block;
+        margin-bottom: var(--spacing-tight);
+        font-weight: 500;
+        color: var(--color-text);
+        font-size: var(--font-size-small);
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: var(--spacing-base);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-base);
+        font-size: var(--font-size-base);
+        margin-bottom: var(--spacing-tight);
+        color: var(--color-text);
+        transition: all 0.2s ease;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px var(--color-primary-focus);
+      }
+
+      .control-group {
+        background-color: var(--color-background);
+        border-radius: var(--radius-base);
+        padding: var(--spacing-base);
+        margin-bottom: var(--spacing-loose);
+        border: 1px solid var(--color-border);
+      }
+
+      .control-group.active {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+      }
+
+      .control-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--spacing-tight);
+        align-items: center;
+        margin-bottom: var(--spacing-tight);
+      }
+
+      .control-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .control-label {
+        font-size: var(--font-size-small);
+        font-weight: 500;
+        color: var(--color-text-subdued);
+      }
+
+      .control-buttons {
+        display: flex;
+        gap: var(--spacing-extra-tight);
+      }
+
+      .control-btn {
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--color-border);
+        background-color: var(--color-surface);
+        border-radius: var(--radius-small);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--color-text);
+        transition: all 0.2s ease;
+      }
+
+      .control-btn:hover {
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-focus);
+      }
+
+      .control-btn:active {
+        transform: scale(0.95);
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: var(--color-primary);
+        color: white;
+        padding: var(--spacing-base) var(--spacing-loose);
+        font-size: var(--font-size-base);
+        font-weight: 500;
+        border: none;
+        border-radius: var(--radius-base);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        text-decoration: none;
+        width: 100%;
+        box-shadow: var(--shadow-button);
+        margin-bottom: var(--spacing-base);
+      }
+
+      .btn:hover {
+        background-color: var(--color-primary-hover);
+        transform: translateY(-2px);
+      }
+
+      .btn.secondary {
+        background-color: var(--color-secondary);
+      }
+
+      .btn.secondary:hover {
+        background-color: var(--color-secondary-hover);
+      }
+
+      .text-input-group {
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-base);
+        padding: var(--spacing-base);
+        margin-bottom: var(--spacing-loose);
+        background-color: var(--color-surface);
+      }
+
+      .text-input-group.active {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 1px var(--color-primary-focus);
+      }
+
+      .section-title {
+        font-size: var(--font-size-subheading);
+        margin-bottom: var(--spacing-loose);
+        color: var(--color-text);
+        font-weight: 600;
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: var(--spacing-tight);
+      }
+
+      /* Drag helper styles */
+      .drag-helper {
+        position: absolute;
+        background-color: var(--color-primary);
+        color: white;
+        padding: 2px 6px;
+        border-radius: var(--radius-small);
+        font-size: 10px;
+        pointer-events: none;
+        z-index: 1001;
+        opacity: 0.9;
+      }
+
+      /* Color variant styles */
+      .color-variant {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid var(--color-border);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-block;
+        margin-right: var(--spacing-tight);
+      }
+
+      .color-variant.selected {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px var(--color-primary-focus);
+      }
+
+      .color-variants {
+        display: flex;
+        gap: var(--spacing-tight);
+        margin-bottom: var(--spacing-base);
+      }
+
+      @media (max-width: 1200px) {
+        .editor-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr auto;
+        }
+
+        .controls-section {
+          max-height: 400px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: var(--spacing-base);
+        }
+
+        .text-overlay {
+          font-size: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Visual Template Editor</h1>
+        <p class="subtitle">
+          Drag and adjust text overlays to create custom templates
+        </p>
+      </header>
+
+      <div class="editor-container">
+        <!-- <div class="preview-section">
+          <div class="image-container" id="imageContainer">
+            <div class="image-wrapper">
+              <img
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='400' viewBox='0 0 500 400'%3E%3Crect width='500' height='400' fill='%23f0f0f0'/%3E%3Ctext x='250' y='200' font-family='Arial' font-size='20' text-anchor='middle' fill='%23666'%3EBase Image Placeholder%3C/text%3E%3C/svg%3E"
+                alt="Customizable template"
+                class="base-image"
+                id="baseImage"
+              />
+              Text overlays will be added dynamically
+            </div>
+          </div>
+        </div> -->
+        <div class="preview-section">
+          <div class="image-container" id="imageContainer">
+            <div class="image-wrapper">
+              <img
+                src=""
+                alt="Customizable mug"
+                class="base-image"
+                id="baseImage"
+              />
+              <!-- Text overlays will be added dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <div class="section-title">Template Configuration</div>
+
+          <!-- Color Variants -->
+          <div class="form-group">
+            <label>Color Variant</label>
+            <div class="color-variants">
+              <div
+                class="color-variant selected"
+                data-color="blue"
+                style="background-color: #4a90e2"
+                title="Blue"
+              ></div>
+              <div
+                class="color-variant"
+                data-color="red"
+                style="background-color: #d0021b"
+                title="Red"
+              ></div>
+              <div
+                class="color-variant"
+                data-color="green"
+                style="background-color: #7ed321"
+                title="Green"
+              ></div>
+              <div
+                class="color-variant"
+                data-color="purple"
+                style="background-color: #9013fe"
+                title="Purple"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Number of Kids -->
+          <div class="form-group">
+            <label>Number of Kids</label>
+            <div class="option-group kids-options">
+              <label class="option-item selected" for="kids-1">
+                <input type="radio" id="kids-1" name="kids" value="1" checked />
+                <span class="option-text">1 Kid</span>
+              </label>
+              <label class="option-item" for="kids-2">
+                <input type="radio" id="kids-2" name="kids" value="2" />
+                <span class="option-text">2 Kids</span>
+              </label>
+              <label class="option-item" for="kids-3">
+                <input type="radio" id="kids-3" name="kids" value="3" />
+                <span class="option-text">3 Kids</span>
+              </label>
+              <label class="option-item" for="kids-4">
+                <input type="radio" id="kids-4" name="kids" value="4" />
+                <span class="option-text">4 Kids</span>
+              </label>
+              <label class="option-item" for="kids-5">
+                <input type="radio" id="kids-5" name="kids" value="5" />
+                <span class="option-text">5 Kids</span>
+              </label>
+              <label class="option-item" for="kids-6">
+                <input type="radio" id="kids-6" name="kids" value="6" />
+                <span class="option-text">6 Kids</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="section-title">Text Overlays</div>
+          <div id="text-controls">
+            <!-- Text input controls will be added dynamically -->
+          </div>
+
+          <!-- Export/Import Controls -->
+          <div class="section-title">Template Actions</div>
+          <button class="btn" id="exportBtn">Export Template JSON</button>
+          <button class="btn secondary" id="importBtn">
+            Import Template JSON
+          </button>
+          <input
+            type="file"
+            id="importFile"
+            accept=".json"
+            style="display: none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Default templates configuration
+      const defaultTemplates = {
+        // Default configuration for 2 kids
+        2: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercent: 35,
+              yPercent: 52,
+              rotation: 5,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercent: 65,
+              yPercent: 42.5,
+              rotation: -16,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercent: 65,
+              yPercent: 56.5,
+              rotation: 6,
+            },
+          ],
+          colors: {
+            "Ceramic Yellow": "2-yellow.webp",
+            "Ceramic Pink": "2-pink.webp",
+            "Ceramic Green": "2-green.webp",
+            "Ceramic Red": "2-red.webp",
+            "Ceramic Black": "2-black.webp",
+            "Ceramic Blue": "2-blue.webp",
+          },
+        },
+        // Configuration for 1 kid
+        1: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercent: 35,
+              yPercent: 53,
+              rotation: 5,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercent: 67,
+              yPercent: 51,
+              rotation: -5,
+            },
+          ],
+          colors: {
+            "Ceramic Yellow": "1-yellow.webp",
+            "Ceramic Pink": "1-pink.webp",
+            "Ceramic Green": "1-green.webp",
+            "Ceramic Red": "1-red.webp",
+            "Ceramic Black": "1-black.webp",
+            "Ceramic Blue": "1-blue.webp",
+          },
+        },
+        // Configuration for 3 kids
+        3: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercent: 34,
+              yPercent: 51,
+              rotation: 5,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercent: 61,
+              yPercent: 37,
+              rotation: -25,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercent: 64,
+              yPercent: 49.5,
+              rotation: -5,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercent: 59,
+              yPercent: 63,
+              rotation: 23,
+            },
+          ],
+          colors: {
+            "Ceramic Yellow": "3-yellow.webp",
+            "Ceramic Pink": "3-pink.webp",
+            "Ceramic Green": "3-green.webp",
+            "Ceramic Red": "3-red.webp",
+            "Ceramic Black": "3-black.webp",
+            "Ceramic Blue": "3-blue.webp",
+          },
+        },
+        // Configuration for 4 kids
+        4: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercent: 36,
+              yPercent: 51,
+              rotation: 5,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercent: 57,
+              yPercent: 30,
+              rotation: -50,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercent: 66,
+              yPercent: 42.5,
+              rotation: -20,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercent: 66,
+              yPercent: 54,
+              rotation: 0,
+            },
+            {
+              id: "text5",
+              content: "Jake",
+              xPercent: 57,
+              yPercent: 66,
+              rotation: 45,
+            },
+          ],
+          colors: {
+            "Ceramic Yellow": "4-yellow.webp",
+            "Ceramic Pink": "4-pink.webp",
+            "Ceramic Green": "4-green.webp",
+            "Ceramic Red": "4-red.webp",
+            "Ceramic Black": "4-black.webp",
+            "Ceramic Blue": "4-blue.webp",
+          },
+        },
+        // Configuration for 5 kids
+        5: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercent: 36,
+              yPercent: 52,
+              rotation: 5,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercent: 46.5,
+              yPercent: 29,
+              rotation: -80,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercent: 62,
+              yPercent: 38,
+              rotation: -35,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercent: 65,
+              yPercent: 50,
+              rotation: -10,
+            },
+            {
+              id: "text5",
+              content: "Jake",
+              xPercent: 60,
+              yPercent: 61.5,
+              rotation: 25,
+            },
+            {
+              id: "text6",
+              content: "Lily",
+              xPercent: 48,
+              yPercent: 69,
+              rotation: 60,
+            },
+          ],
+          colors: {
+            "Ceramic Yellow": "5-yellow.webp",
+            "Ceramic Pink": "5-pink.webp",
+            "Ceramic Green": "5-green.webp",
+            "Ceramic Red": "5-red.webp",
+            "Ceramic Black": "5-black.webp",
+            "Ceramic Blue": "5-blue.webp",
+          },
+        },
+        // Configuration for 6 kids
+        6: {
+          textFields: [
+            {
+              id: "text1",
+              content: "Grandpa",
+              xPercent: 36,
+              yPercent: 51,
+              rotation: 5,
+            },
+            {
+              id: "text2",
+              content: "Sarah",
+              xPercent: 43,
+              yPercent: 28,
+              rotation: -90,
+            },
+            {
+              id: "text3",
+              content: "Kelvin",
+              xPercent: 55,
+              yPercent: 31,
+              rotation: -70,
+            },
+            {
+              id: "text4",
+              content: "Emma",
+              xPercent: 65,
+              yPercent: 41,
+              rotation: -30,
+            },
+            {
+              id: "text5",
+              content: "Jake",
+              xPercent: 64,
+              yPercent: 55,
+              rotation: 25,
+            },
+            {
+              id: "text6",
+              content: "Lily",
+              xPercent: 55,
+              yPercent: 65,
+              rotation: 50,
+            },
+            {
+              id: "text7",
+              content: "Noah",
+              xPercent: 42.5,
+              yPercent: 67,
+              rotation: 86,
+            },
+          ],
+          colors: {
+            "Ceramic Yellow": "6-yellow.webp",
+            "Ceramic Pink": "6-pink.webp",
+            "Ceramic Green": "6-green.webp",
+            "Ceramic Red": "6-red.webp",
+            "Ceramic Black": "6-black.webp",
+            "Ceramic Blue": "6-blue.webp",
+          },
+        },
+      };
+
+      // Global variables
+      let currentKids = 1;
+      let currentColor = "blue";
+      let currentTemplates = JSON.parse(
+        JSON.stringify(defaultTemplates[currentKids])
+      );
+      let textOverlays = {};
+      let selectedOverlay = null;
+      let isDragging = false;
+      let dragStartPos = { x: 0, y: 0 };
+
+      // DOM elements
+      const baseImage = document.getElementById("baseImage");
+      const imageContainer = document.getElementById("imageContainer");
+      const textControlsContainer = document.getElementById("text-controls");
+      const exportBtn = document.getElementById("exportBtn");
+      const importBtn = document.getElementById("importBtn");
+      const importFile = document.getElementById("importFile");
+
+      baseImage.src = `/${currentTemplate.colors[currentColor]}`;
+
+      // Initialize the application
+      function init() {
+        setupEventListeners();
+        updateTemplate();
+      }
+
+      function setupEventListeners() {
+        // Kids selection
+        document.querySelectorAll('input[name="kids"]').forEach((radio) => {
+          radio.addEventListener("change", handleKidsChange);
+        });
+
+        // Color variants
+        document.querySelectorAll(".color-variant").forEach((variant) => {
+          variant.addEventListener("click", handleColorChange);
+        });
+
+        // Export/Import
+        exportBtn.addEventListener("click", exportTemplate);
+        importBtn.addEventListener("click", () => importFile.click());
+        importFile.addEventListener("change", importTemplate);
+
+        // Image container mouse events for dragging
+        imageContainer.addEventListener("mousedown", handleMouseDown);
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+      }
+
+      function handleKidsChange(e) {
+        // Update selected style
+        document
+          .querySelectorAll(".kids-options .option-item")
+          .forEach((item) => {
+            item.classList.remove("selected");
+          });
+        e.target.parentElement.classList.add("selected");
+
+        currentKids = parseInt(e.target.value);
+        updateTemplate();
+      }
+
+      function handleColorChange(e) {
+        // Update selected style
+        document.querySelectorAll(".color-variant").forEach((variant) => {
+          variant.classList.remove("selected");
+        });
+        e.target.classList.add("selected");
+
+        currentColor = e.target.dataset.color;
+        // Color change doesn't affect template structure, just visual
+      }
+
+      function updateTemplate() {
+        clearOverlays();
+        createTextControls();
+        createTextOverlays();
+      }
+
+      function clearOverlays() {
+        document.querySelectorAll(".text-overlay").forEach((overlay) => {
+          overlay.remove();
+        });
+        textOverlays = {};
+        selectedOverlay = null;
+      }
+
+      function createTextControls() {
+        textControlsContainer.innerHTML = "";
+
+        const template = currentTemplates[currentKids];
+
+        template.textFields.forEach((field, index) => {
+          const controlGroup = document.createElement("div");
+          controlGroup.className = "text-input-group";
+          controlGroup.dataset.fieldId = field.id;
+
+          controlGroup.innerHTML = `
+            <div class="form-group">
+              <label>${field.id === "text1" ? "Dad" : `Kid ${index}`}</label>
+              <input type="text" value="${
+                field.content
+              }" onchange="updateFieldContent('${field.id}', this.value)">
+            </div>
+            
+            <div class="control-group">
+              <div class="control-row">
+                <span class="control-label">X Left: ${
+                  field.xPercentLeft
+                }%</span>
+                <div class="control-buttons">
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'xPercentLeft', -1)">-</button>
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'xPercentLeft', 1)">+</button>
+                </div>
+              </div>
+              
+              <div class="control-row">
+                <span class="control-label">X Right: ${
+                  field.xPercentRight
+                }%</span>
+                <div class="control-buttons">
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'xPercentRight', -1)">-</button>
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'xPercentRight', 1)">+</button>
+                </div>
+              </div>
+              
+              <div class="control-row">
+                <span class="control-label">Y: ${field.yPercent}%</span>
+                <div class="control-buttons">
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'yPercent', -1)">-</button>
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'yPercent', 1)">+</button>
+                </div>
+              </div>
+              
+              <div class="control-row">
+                <span class="control-label">Rotation: ${field.rotation}°</span>
+                <div class="control-buttons">
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'rotation', -5)">-</button>
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'rotation', 5)">+</button>
+                </div>
+              </div>
+              
+              <div class="control-row">
+                <span class="control-label">Size: ${field.fontSize}px</span>
+                <div class="control-buttons">
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'fontSize', -1)">-</button>
+                  <button class="control-btn" onclick="adjustField('${
+                    field.id
+                  }', 'fontSize', 1)">+</button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          textControlsContainer.appendChild(controlGroup);
+        });
+      }
+
+      function createTextOverlays() {
+        const template = currentTemplates[currentKids];
+        const imageWrapper = document.querySelector(".image-wrapper");
+
+        template.textFields.forEach((field) => {
+          // Create left overlay
+          const leftOverlay = createOverlay(field, "left");
+          imageWrapper.appendChild(leftOverlay);
+          textOverlays[field.id + "_left"] = leftOverlay;
+
+          // Create right overlay
+          const rightOverlay = createOverlay(field, "right");
+          imageWrapper.appendChild(rightOverlay);
+          textOverlays[field.id + "_right"] = rightOverlay;
+        });
+      }
+
+      function createOverlay(field, side) {
+        const overlay = document.createElement("div");
+        overlay.className = "text-overlay";
+        overlay.dataset.fieldId = field.id;
+        overlay.dataset.side = side;
+        overlay.textContent = field.content;
+
+        const xPercent =
+          side === "left" ? field.xPercentLeft : field.xPercentRight;
+
+        overlay.style.left = `${xPercent}%`;
+        overlay.style.top = `${field.yPercent}%`;
+        overlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+        overlay.style.fontSize = `${field.fontSize}px`;
+
+        overlay.addEventListener("click", () => selectOverlay(overlay));
+
+        return overlay;
+      }
+
+      function selectOverlay(overlay) {
+        // Remove previous selection
+        document.querySelectorAll(".text-overlay").forEach((o) => {
+          o.classList.remove("selected");
+        });
+        document.querySelectorAll(".text-input-group").forEach((g) => {
+          g.classList.remove("active");
+        });
+
+        // Select new overlay
+        overlay.classList.add("selected");
+        selectedOverlay = overlay;
+
+        // Highlight corresponding control group
+        const fieldId = overlay.dataset.fieldId;
+        const controlGroup = document.querySelector(
+          `[data-field-id="${fieldId}"]`
+        );
+        if (controlGroup) {
+          controlGroup.classList.add("active");
+        }
+      }
+
+      function updateFieldContent(fieldId, newContent) {
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+        if (field) {
+          field.content = newContent;
+
+          // Update both overlays
+          const leftOverlay = textOverlays[fieldId + "_left"];
+          const rightOverlay = textOverlays[fieldId + "_right"];
+
+          if (leftOverlay) leftOverlay.textContent = newContent;
+          if (rightOverlay) rightOverlay.textContent = newContent;
+        }
+      }
+
+      function adjustField(fieldId, property, delta) {
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+
+        if (!field) return;
+
+        // Apply adjustment with bounds checking
+        let newValue = field[property] + delta;
+
+        // Set bounds based on property
+        switch (property) {
+          case "xPercentLeft":
+          case "xPercentRight":
+          case "yPercent":
+            newValue = Math.max(0, Math.min(100, newValue));
+            break;
+          case "rotation":
+            newValue = Math.max(-180, Math.min(180, newValue));
+            break;
+          case "fontSize":
+            newValue = Math.max(8, Math.min(72, newValue));
+            break;
+        }
+
+        field[property] = newValue;
+
+        // Update overlays
+        updateOverlayStyle(fieldId);
+
+        // Update control labels
+        updateControlLabels();
+      }
+
+      function updateOverlayStyle(fieldId) {
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+
+        if (!field) return;
+
+        const leftOverlay = textOverlays[fieldId + "_left"];
+        const rightOverlay = textOverlays[fieldId + "_right"];
+
+        if (leftOverlay) {
+          leftOverlay.style.left = `${field.xPercentLeft}%`;
+          leftOverlay.style.top = `${field.yPercent}%`;
+          leftOverlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+          leftOverlay.style.fontSize = `${field.fontSize}px`;
+        }
+
+        if (rightOverlay) {
+          rightOverlay.style.left = `${field.xPercentRight}%`;
+          rightOverlay.style.top = `${field.yPercent}%`;
+          rightOverlay.style.transform = `translate(-50%, -50%) rotate(${field.rotation}deg)`;
+          rightOverlay.style.fontSize = `${field.fontSize}px`;
+        }
+      }
+
+      function updateControlLabels() {
+        const template = currentTemplates[currentKids];
+
+        template.textFields.forEach((field) => {
+          const controlGroup = document.querySelector(
+            `[data-field-id="${field.id}"]`
+          );
+          if (!controlGroup) return;
+
+          const labels = controlGroup.querySelectorAll(".control-label");
+          labels[0].textContent = `X Left: ${field.xPercentLeft}%`;
+          labels[1].textContent = `X Right: ${field.xPercentRight}%`;
+          labels[2].textContent = `Y: ${field.yPercent}%`;
+          labels[3].textContent = `Rotation: ${field.rotation}°`;
+          labels[4].textContent = `Size: ${field.fontSize}px`;
+        });
+      }
+
+      // Mouse event handlers for dragging
+      function handleMouseDown(e) {
+        const overlay = e.target.closest(".text-overlay");
+        if (!overlay) return;
+
+        e.preventDefault();
+        isDragging = true;
+        selectedOverlay = overlay;
+
+        overlay.classList.add("dragging");
+        selectOverlay(overlay);
+
+        const rect = imageContainer.getBoundingClientRect();
+        dragStartPos = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        };
+      }
+
+      function handleMouseMove(e) {
+        if (!isDragging || !selectedOverlay) return;
+
+        e.preventDefault();
+
+        const rect = imageContainer.getBoundingClientRect();
+        const imageRect = baseImage.getBoundingClientRect();
+
+        // Calculate position relative to the image
+        const x = e.clientX - imageRect.left;
+        const y = e.clientY - imageRect.top;
+
+        const xPercent = Math.max(
+          0,
+          Math.min(100, (x / imageRect.width) * 100)
+        );
+        const yPercent = Math.max(
+          0,
+          Math.min(100, (y / imageRect.height) * 100)
+        );
+
+        // Update overlay position
+        selectedOverlay.style.left = `${xPercent}%`;
+        selectedOverlay.style.top = `${yPercent}%`;
+
+        // Update template data
+        const fieldId = selectedOverlay.dataset.fieldId;
+        const side = selectedOverlay.dataset.side;
+        const template = currentTemplates[currentKids];
+        const field = template.textFields.find((f) => f.id === fieldId);
+
+        if (field) {
+          if (side === "left") {
+            field.xPercentLeft = Math.round(xPercent);
+          } else {
+            field.xPercentRight = Math.round(xPercent);
+          }
+          field.yPercent = Math.round(yPercent);
+        }
+      }
+
+      function handleMouseUp(e) {
+        if (isDragging && selectedOverlay) {
+          selectedOverlay.classList.remove("dragging");
+          updateControlLabels();
+        }
+
+        isDragging = false;
+        selectedOverlay = null;
+      }
+
+      function exportTemplate() {
+        const exportData = {
+          templates: currentTemplates,
+          metadata: {
+            exportDate: new Date().toISOString(),
+            version: "1.0",
+          },
+        };
+
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `template-config-${Date.now()}.json`;
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+      }
+
+      function importTemplate(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          try {
+            const importedData = JSON.parse(event.target.result);
+
+            // Validate imported data structure
+            if (
+              importedData.templates &&
+              typeof importedData.templates === "object"
+            ) {
+              currentTemplates = importedData.templates;
+              updateTemplate();
+              alert("Template imported successfully!");
+            } else {
+              alert("Invalid template file format.");
+            }
+          } catch (error) {
+            alert("Error reading template file: " + error.message);
+          }
+        };
+
+        reader.readAsText(file);
+
+        // Reset file input
+        e.target.value = "";
+      }
+
+      // Make functions globally available
+      window.updateFieldContent = updateFieldContent;
+      window.adjustField = adjustField;
+
+      // Initialize the application when DOM is loaded
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    </script>
+  </body>
+</html>

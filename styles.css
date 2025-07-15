@@ -128,7 +128,7 @@ h1 {
   transform: translate(-50%, -50%);
   line-height: 1;
   color: #000000;
-  font-size: 21px;
+  font-size: 15px;
   font-family: "Cookie", cursive;
   white-space: nowrap;
   transition: all 0.3s ease;
@@ -441,7 +441,7 @@ input[type="text"]:focus {
   }
 
   .text-overlay {
-    font-size: 20px;
+    font-size: 17px;
   }
 }
 
