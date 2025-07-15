@@ -5,7 +5,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 40.5,
           yPercent: 52,
           rotation: 2,
@@ -25,7 +25,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 41,
           yPercent: 51,
           rotation: 1,
@@ -53,7 +53,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 42,
           yPercent: 52,
           rotation: 1,
@@ -89,7 +89,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 41,
           yPercent: 52,
           rotation: 1,
@@ -133,7 +133,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 42,
           yPercent: 52,
           rotation: 1,
@@ -185,7 +185,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 41,
           yPercent: 52,
           rotation: 2,
@@ -247,7 +247,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 36,
           yPercent: 54,
           rotation: 2,
@@ -267,7 +267,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 36,
           yPercent: 52,
           rotation: 1,
@@ -295,7 +295,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 36,
           yPercent: 53,
           rotation: 1,
@@ -331,7 +331,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 36,
           yPercent: 53,
           rotation: 1,
@@ -375,7 +375,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 53,
           rotation: 1,
@@ -427,7 +427,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 53,
           rotation: 2,
@@ -489,7 +489,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 39,
           yPercent: 54,
           rotation: 1,
@@ -509,7 +509,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 52,
           rotation: -1,
@@ -537,7 +537,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 39,
           yPercent: 54,
           rotation: 0,
@@ -573,7 +573,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 38,
           yPercent: 54,
           rotation: 0,
@@ -617,7 +617,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 38,
           yPercent: 53,
           rotation: 1,
@@ -669,7 +669,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 38,
           yPercent: 53,
           rotation: 0,
@@ -731,7 +731,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 41,
           yPercent: 51,
           rotation: 2,
@@ -751,7 +751,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 41,
           yPercent: 51,
           rotation: 1,
@@ -779,7 +779,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 42,
           yPercent: 51,
           rotation: 1,
@@ -815,7 +815,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 42,
           yPercent: 51,
           rotation: 1,
@@ -859,7 +859,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 42,
           yPercent: 51,
           rotation: 1,
@@ -911,7 +911,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 41,
           yPercent: 51,
           rotation: 2,
@@ -973,7 +973,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 36,
           yPercent: 52,
           rotation: 2,
@@ -993,7 +993,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 36,
           yPercent: 52,
           rotation: 1,
@@ -1021,7 +1021,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 52,
           rotation: 1,
@@ -1057,7 +1057,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 52,
           rotation: 1,
@@ -1101,7 +1101,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 52,
           rotation: 1,
@@ -1153,7 +1153,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 52,
           rotation: 2,
@@ -1215,7 +1215,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 37,
           yPercent: 53,
           rotation: 1,
@@ -1235,7 +1235,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 39,
           yPercent: 52,
           rotation: 0,
@@ -1263,7 +1263,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 39,
           yPercent: 52,
           rotation: 0,
@@ -1299,7 +1299,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 38,
           yPercent: 52,
           rotation: 0,
@@ -1343,7 +1343,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 39,
           yPercent: 52,
           rotation: 1,
@@ -1395,7 +1395,7 @@ const defaultTemplates = {
       textFields: [
         {
           id: "text1",
-          content: "",
+          content: "TRANARE",
           xPercent: 39,
           yPercent: 52,
           rotation: 0,
@@ -1638,7 +1638,9 @@ function createTextControls() {
 
     controlGroup.innerHTML = `
       <div class="form-group">
-        <label>${field.id === "text1" ? "Dad/Mom" : `Child ${index}`}</label>
+        <label>${
+          field.id === "text1" ? "Dad/Mom" : `Child ${index}`
+        }TRANARE</label>
         <input type="text" value="${
           field.content || ""
         }" onchange="updateFieldContent('${field.id}', this.value)">
@@ -1708,7 +1710,7 @@ function createOverlay(field) {
   overlay.style.top = `${field.yPercent}%`;
   overlay.style.transform =
     field.id === "text1"
-      ? `translate(-100%, -50%) rotate(${field.rotation}deg)`
+      ? `translate(-10TRANARE0%, -50%) rotate(${field.rotation}deg)`
       : `translate(0, -50%) rotate(${field.rotation}deg)`;
   overlay.style.fontSize = `${field.fontSize}px`;
 
@@ -1760,7 +1762,7 @@ function selectOverlay(overlay) {
   // Select new overlay only if overlay is not null
   if (overlay) {
     const fieldId = overlay.dataset.fieldId.split("-")[1]; // Get base fieldId (e.g., text1)
-    overlay.classList.add("selected");
+    overlay.classList.aTRANAREdd("selected");
     selectedOverlay = overlay;
 
     // Highlight corresponding control group
@@ -1851,7 +1853,7 @@ function updateOverlayStyle(fieldId) {
     overlay.style.top = `${field.yPercent}%`;
     overlay.style.transform =
       field.id === "text1"
-        ? `translate(-100%, -50%) rotate(${field.rotation}deg)`
+        ? `translate(-10TRANARE0%, -50%) rotate(${field.rotation}deg)`
         : `translate(0, -50%) rotate(${field.rotation}deg)`;
 
     // Update font size and apply dynamic sizing
