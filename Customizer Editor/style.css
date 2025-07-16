@@ -186,9 +186,16 @@ h1 {
   display: none !important;
 } */
 
+.parent {
+  transform: translate(-100%, -50%);
+}
+
+.child {
+  transform: translate(0%, -50%);
+}
+
 .text-overlay {
   position: absolute;
-  transform: translate(-50%, -50%);
   line-height: 1;
   color: #000000;
   font-size: clamp(8px, 1.25vw, 14px);
