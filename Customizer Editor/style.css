@@ -196,6 +196,7 @@ h1 {
   white-space: nowrap;
   transition: all 0.3s ease;
   cursor: move;
+  letter-spacing: 0em;
   z-index: 10;
   border: 0.5px solid transparent;
 }
